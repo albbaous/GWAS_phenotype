@@ -3,7 +3,7 @@ A simple pipeline for extracting my phenotype — all the way through to running
 
 ---
 
-## 📌 Step 1 — Extracting Metabolites for Phenotype
+## Step 1 — Extracting Metabolites for Phenotype
 
 To get the correct data from **auth.dnanexus.com** (UK Biobank Research Analysis Platform), you need to use the following command. This extracts all **14 metabolites** listed in the paper by *Deelen et al., 2019* (see [Supplement, page 30](https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-019-11311-9/MediaObjects/41467_2019_11311_MOESM1_ESM.pdf)):
 
@@ -31,7 +31,9 @@ record
 - `-o`: Specifies the output CSV file  
 
 > ⚠️ **Note**: This command only retrieves metabolite values.  
-> You will also need to extract baseline characteristics like age, sex, and BMI to complete phenotype mapping.
+> You will also need to extract baseline characteristics like age, sex, and BMI to complete phenotype mapping
+> You can check values by mirroring/building the same cohort on UKB RAP, selecting a participant and seeing if the values are the same.
+  - i.e, `grep '100010' cohort2.csv` and check they are all the same as column names in UKB rap have metabolite name
 
 ---
 
@@ -54,4 +56,4 @@ Once you've extracted the metabolite data, the next step is to map participants 
 ---
 
 ### Step 3 — Add weights
-Add weights from paper 
+Add weights from Deelen et al., paper to get score 
