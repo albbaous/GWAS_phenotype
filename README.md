@@ -57,3 +57,27 @@ Once you've extracted the metabolite data, the next step is to map participants 
 
 ### Step 3 — Add weights
 Add weights from Deelen et al., paper to get score 
+
+Just saving these here as it is the UKB IDs mapped to the names of variables in UKB: 
+# Define biomarkers and weights from Deelen et al., 2019
+# The "column" field matches exactly with the headers in your CSV
+```
+biomarkers <- tribble(
+  ~column,                   ~label,       ~lnHR,
+  "participant.p23470_i0",   "Glc",         0.246,
+  "participant.p23471_i0",   "Lac",         0.130,
+  "participant.p23463_i0",   "His",        -0.067,
+  "participant.p23465_i0",   "Ile",         0.056,
+  "participant.p23466_i0",   "Leu",        -0.318,
+  "participant.p23467_i0",   "Val",        -0.035,
+  "participant.p23468_i0",   "Phe",         0.115,
+  "participant.p23476_i0",   "AcAce",       0.100,
+  "participant.p30600_i0",   "Alb",        -0.149,
+  "participant.p23480_i0",   "GlycA",       0.272,
+  "participant.p23473_i0",   "Cit",         0.289,
+  "participant.p23453_i0",   "PUFA_FA",    -0.253,
+  "participant.p23482_i0",   "XXL_VLDL_L",  0.022,
+  "participant.p23573_i0",   "S_HDL_L",    -0.123,
+  "participant.p23431_i0",   "VLDL_D",     -0.245
+)
+```
