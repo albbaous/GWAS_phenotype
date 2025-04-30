@@ -1,5 +1,5 @@
 # GWAS_prep
-A simple pipeline for extracting my phenotype — all the way through to running my GWAS.
+A simple pipeline for extracting my phenotype — all the way through to running my GWAS. This is sing MetaboHealth as defined in Deelen et al., 2019
 
 ---
 
@@ -34,29 +34,28 @@ record
 > You will also need to extract baseline characteristics like age, sex, and BMI to complete phenotype mapping
 > You can check values by mirroring/building the same cohort on UKB RAP, selecting a participant and seeing if the values are the same.
   - i.e, `grep '100010' cohort2.csv` and check they are all the same as column names in UKB rap have metabolite name
-
 ---
 
-### Step 2 — Mapping for CSF db
+### Step 2 — Adding some baseline characteristics to the command and proceeding to filter on those
 
 Once you've extracted the metabolite data, the next step is to map participants to those on the UoM db
 #### Actions
 
-1. **Extract additional baseline characteristics** from UK Biobank and add those to the cohort file and command from Step 1:
+1. **Add and extract additional baseline characteristics** from UK Biobank and add those to the cohort file and command from Step 1:
    - Age (`21003`)
    - Sex (`31`)
    - BMI (`21001`)
    - Smoking (`20116`)
-   - Other health status variables as needed
+   - Account for metabolic syndrome by including heart disease, stroke, diabetes, general cancer i.e., ICD 9 and 10
+  
+**Metabolic syndrome is defined as:**
+Metabolic syndrome is a group of conditions that increase the risk of heart disease, stroke and type 2 diabetes. These conditions include high blood pressure, high blood sugar, too much fat around the waist, and high cholesterol or triglyceride levels.
+https://www.mayoclinic.org/diseases-conditions/metabolic-syndrome/symptoms-causes/syc-20351916
 
 > ⚠️ **Note**:
-> Also extract features for metabolic syndrome i.e., heart disease, stroke, diabetes, general cancer so ICD9-10
+> Also extract features for metabolic syndrome i.e., heart disease, stroke, diabetes and cancer - removing the unhealthy lot as theres a lot of evidence that they may skew the results i.e., https://pmc.ncbi.nlm.nih.gov/articles/PMC8504077/
 > Then clean data to remove N/A values and to remove unhealthy (so those with the above diseases)
-> use cleaned data to calculate score BEFORE mapping to csf
-
-2. **Integrate phenotype definitions**:
-   - Map participants to CSF data
-   - Use identifying characteristics for merging datasets
+> use cleaned data to calculate score BEFORE mapping to csf (just to test out)
 
 ---
 
@@ -70,9 +69,7 @@ MetaboHealth = (((Z(ln[XXL_VLDL_L]))*ln(0.80)) + ((Z(ln[S_HDL_L]))*ln(0.87)) + (
 Z states for z-scaling and ln states for natural logarithm.
 ```
 
-### Just saving these here as it is the UKB IDs mapped to the names of variables in UKB: 
-- Define biomarkers and weights from Deelen et al., 2019
-- The "column" field matches exactly with the headers in CSV
+### Just saving these here as it is the UKB IDs mapped to the names of variables in the Deelen paper: 
 ```
 biomarkers <- tribble(
   ~column,                   ~label,       ~lnHR,
@@ -93,4 +90,4 @@ biomarkers <- tribble(
   "participant.p23431_i0",   "VLDL_D",     -0.245
 )
 ```
-I got the mappings of what they come up as in UKB from the table in `ukb_names`
+I got the mappings of what they come up as in UKB from the table in `ukb_names` - which I got from a paper i cant remember the exact name of
