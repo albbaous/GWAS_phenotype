@@ -80,6 +80,14 @@ MetaboHealth = (((Z(ln[XXL_VLDL_L]))*ln(0.80)) + ((Z(ln[S_HDL_L]))*ln(0.87)) + (
 Z states for z-scaling and ln states for natural logarithm.
 ```
 
+To do this you need: 
+1. Compute the natural logarithm (ln or log in R).
+2. Perform z-scaling (standardization) for each of the variables.
+3. Multiply each standardized value by the corresponding constant, and sum up the results.
+
+Run the R script saved here as `metabohealth.R`
+---
+
 ## Just saving these here as it is the UKB IDs mapped to the names of variables in the Deelen paper: 
 ```
 library(tibble)
