@@ -94,8 +94,11 @@ To do this you need:
 - This was a bit more sophisticated so I wanted to get scores before diving into it but **run the script saved as `metabohealth_imputed.R` to get imputed results**
 
 **Explanation of the Parameters:**
+
 -`data`: Your dataset with missing values.
--`method`: The imputation method used (in this case, pmm stands for predictive mean matching).
+
+- `method`: The imputation method used (in this case, pmm stands for predictive mean matching).
+
 - `m`: The number of imputed datasets (typically 5 or more).
 
 ---
