@@ -89,10 +89,17 @@ To do this you need:
 - This does each step by step so I can see the resulting columns and then multiply them by each other
 - this creates a file phenotype dataframe at the end whereby we have all the metabolites, characteristics and then a score - this is not in the phenotype format i need for GWAS yet as certain values need to be imputed in original data to avoid scores of 0
 
-**Run the R script saved as metabohealth.R to get imputed results**
+---
+### Step 4 — Imputation using `mice` with BMI, Age, and Sex as predictors
+- This was a bit more sophisticated so I wanted to get scores before diving into it but **run the script saved as `metabohealth_imputed.R` to get imputed results**
 
+**Explanation of the Parameters:**
+-`data`: Your dataset with missing values.
+-`method`: The imputation method used (in this case, pmm stands for predictive mean matching).
+- `m`: The number of imputed datasets (typically 5 or more).
 
-### Step 4 — Return to impute and GWAS format 
+---
+### Step 5 — GWAS format 
 -The `.fam` file in UKB has the following columns which correspond to Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype. 
 
 ```
