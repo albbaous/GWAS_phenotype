@@ -82,23 +82,39 @@ Z states for z-scaling and ln states for natural logarithm.
 
 ## Just saving these here as it is the UKB IDs mapped to the names of variables in the Deelen paper: 
 ```
+library(tibble)
+
 biomarkers <- tribble(
-  ~column,                   ~label,       ~lnHR,
-  "participant.p23470_i0",   "Glc",         0.246,
-  "participant.p23471_i0",   "Lac",         0.130,
-  "participant.p23463_i0",   "His",        -0.067,
-  "participant.p23465_i0",   "Ile",         0.056,
-  "participant.p23466_i0",   "Leu",        -0.318,
-  "participant.p23467_i0",   "Val",        -0.035,
-  "participant.p23468_i0",   "Phe",         0.115,
-  "participant.p23476_i0",   "AcAce",       0.100,
-  "participant.p30600_i0",   "Alb",        -0.149,
-  "participant.p23480_i0",   "GlycA",       0.272,
-  "participant.p23473_i0",   "Cit",         0.289,
-  "participant.p23453_i0",   "PUFA_FA",    -0.253,
-  "participant.p23482_i0",   "XXL_VLDL_L",  0.022,
-  "participant.p23573_i0",   "S_HDL_L",    -0.123,
-  "participant.p23431_i0",   "VLDL_D",     -0.245
+  ~column,                    ~label,
+  "participant.eid",          "eid",
+  "participant.p21003_i0",    "Age",
+  "participant.p31",          "Sex",
+  "participant.p21001_i0",    "BMI",
+  "participant.p22009_a1",    "PC1",
+  "participant.p22009_a2",    "PC2",
+  "participant.p22009_a3",    "PC3",
+  "participant.p22009_a4",    "PC4",
+  "participant.p22009_a5",    "PC5",
+  "participant.p22009_a6",    "PC6",
+  "participant.p22009_a7",    "PC7",
+  "participant.p22009_a8",    "PC8",
+  "participant.p22009_a9",    "PC9",
+  "participant.p22009_a10",   "PC10",
+  "participant.p23470_i0",    "Glc",
+  "participant.p23471_i0",    "Lac",
+  "participant.p23463_i0",    "His",
+  "participant.p23465_i0",    "Ile",
+  "participant.p23466_i0",    "Leu",
+  "participant.p23467_i0",    "Val",
+  "participant.p23468_i0",    "Phe",
+  "participant.p23476_i0",    "AcAce",
+  "participant.p30600_i0",    "Alb",
+  "participant.p23480_i0",    "GlycA",
+  "participant.p23473_i0",    "Cit",
+  "participant.p23453_i0",    "PUFA_FA",
+  "participant.p23482_i0",    "XXL_VLDL_L",
+  "participant.p23573_i0",    "S_HDL_L",
+  "participant.p23431_i0",    "VLDL_D"
 )
 ```
 I got the mappings of what they come up as in UKB from the table in `ukb_names` - which I got from a paper i cant remember the exact name of
