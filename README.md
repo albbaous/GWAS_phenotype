@@ -95,7 +95,7 @@ To do this you need:
 
 **Explanation of the Parameters:**
 
--`data`: Your dataset with missing values.
+- `data`: Your dataset with missing values.
 
 - `method`: The imputation method used (in this case, pmm stands for predictive mean matching).
 
