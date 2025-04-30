@@ -36,17 +36,28 @@ record
   - i.e, `grep '100010' cohort2.csv` and check they are all the same as column names in UKB rap have metabolite name
 ---
 
-### Step 2 — Adding some baseline characteristics to the command and proceeding to filter on those
+### Step 2 — Adding some baseline characteristics/covariates to the command and proceeding to filter on those
 
 Once you've extracted the metabolite data, the next step is to map participants to those on the UoM db
 #### Actions
 
-1. **Add and extract additional baseline characteristics** from UK Biobank - these need to correspond to the UKB coveriates found across all `.fam` files
+1. **Add and extract additional covariates** from UK Biobank
    - Age (`21003`)
    - Sex (`31`)
    - BMI (`21001`)
+   - 10 Principal Components (`22009_a1`) - all the way to 10
 
-We can use these to impute data ^ 
+```bash
+dx extract_dataset \
+  project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ302v \
+  --fields participant.eid,participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23473_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0,participant.p31,participant.p21001_i0  \
+  -o cohort_data3.csv
+```
+
+- We can use these to impute data ^ 
+- Covariates in `.fam` files are Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype.
+
+ 
 
 **Metabolic syndrome is defined as:**
 Metabolic syndrome is a group of conditions that increase the risk of heart disease, stroke and type 2 diabetes. These conditions include high blood pressure, high blood sugar, too much fat around the waist, and high cholesterol or triglyceride levels.
