@@ -45,7 +45,6 @@ Once you've extracted the metabolite data, the next step is to map participants 
    - Age (`21003`)
    - Sex (`31`)
    - BMI (`21001`)
-   - Smoking (`
 
 We can use these to impute data ^ 
 
@@ -57,6 +56,10 @@ https://www.mayoclinic.org/diseases-conditions/metabolic-syndrome/symptoms-cause
 > Also extract features for metabolic syndrome i.e., heart disease, stroke, diabetes and cancer - removing the unhealthy lot as theres a lot of evidence that they may skew the results i.e., https://pmc.ncbi.nlm.nih.gov/articles/PMC8504077/
 > Then clean data to remove N/A values and to remove unhealthy (so those with the above diseases)
 
+> **Instead**
+> DO NOT remove NAs- impute them
+> DO NOT remove unhealthy - focus on everyone
+> DO NOT remove relatives - do later 
 ---
 
 ### Step 3 — Add weights
@@ -69,7 +72,7 @@ MetaboHealth = (((Z(ln[XXL_VLDL_L]))*ln(0.80)) + ((Z(ln[S_HDL_L]))*ln(0.87)) + (
 Z states for z-scaling and ln states for natural logarithm.
 ```
 
-### Just saving these here as it is the UKB IDs mapped to the names of variables in the Deelen paper: 
+## Just saving these here as it is the UKB IDs mapped to the names of variables in the Deelen paper: 
 ```
 biomarkers <- tribble(
   ~column,                   ~label,       ~lnHR,
