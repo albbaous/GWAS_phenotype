@@ -61,7 +61,14 @@ Once you've extracted the metabolite data, the next step is to map participants 
 ---
 
 ### Step 3 — Add weights
-Add weights from Deelen et al., paper to get score 
+Add weights from Deelen et al., paper to get score
+It has alreadt been calculated in van Holstein et al., 2024 using this 
+
+```
+MetaboHealth = (((Z(ln[XXL_VLDL_L]))*ln(0.80)) + ((Z(ln[S_HDL_L]))*ln(0.87)) + ((Z(ln[VLDL-D]))*ln(0.85)) + ((Z(ln[PUFA/FA]))*ln(0.78)) + ((Z(ln[Glucose]))*ln(1.16)) + 
+((Z(ln[Lactate]))*ln(1.06)) + ((Z(ln[Histidine]))*ln(0.93)) + ((Z(ln[Isoleucine]))*ln(1.23)) + ((Z(ln[Leucine]))*ln(0.82)) + ((Z(ln[Valine]))*ln(0.87)) + ((Z(ln[Phenylalanine]))*ln(1.13)) + ((Z(ln[Acetoacetate]))*ln(1.08)) + ((Z(ln[Albumin]))*ln(0.89)) + ((Z(ln[Glycoprotein_acetyls]))*ln(1.32))).
+Z states for z-scaling and ln states for natural logarithm.
+```
 
 ### Just saving these here as it is the UKB IDs mapped to the names of variables in UKB: 
 - Define biomarkers and weights from Deelen et al., 2019
@@ -86,3 +93,4 @@ biomarkers <- tribble(
   "participant.p23431_i0",   "VLDL_D",     -0.245
 )
 ```
+I got the mappings of what they come up as in UKB from the table in `ukb_names`
