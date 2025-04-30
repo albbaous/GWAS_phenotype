@@ -85,10 +85,13 @@ To do this you need:
 2. Perform z-scaling (standardization) for each of the variables.
 3. Multiply each standardized value by the corresponding constant, and sum up the results.
 
-Run the R script saved here as `metabohealth.R`
+**Run the R script saved here as `metabohealth.R`** 
+- This does each step by step so I can see the resulting columns and then multiply them by each other
+- this creates a file phenotype dataframe at the end whereby we have all the metabolites, characteristics and then a score - this is not in the phenotype format i need for GWAS yet as certain values need to be imputed in original data to avoid scores of 0
 ---
 
-## Just saving these here as it is the UKB IDs mapped to the names of variables in the Deelen paper: 
+## EXTRA - IGNORE 
+Just saving these here as it is the UKB IDs mapped to the names of variables in the Deelen paper: 
 ```
 library(tibble)
 
