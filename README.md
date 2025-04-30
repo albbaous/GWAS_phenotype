@@ -41,21 +41,21 @@ record
 Once you've extracted the metabolite data, the next step is to map participants to those on the UoM db
 #### Actions
 
-1. **Add and extract additional baseline characteristics** from UK Biobank and add those to the cohort file and command from Step 1:
+1. **Add and extract additional baseline characteristics** from UK Biobank - these need to correspond to the UKB coveriates found across all `.fam` files
    - Age (`21003`)
    - Sex (`31`)
    - BMI (`21001`)
-   - Smoking (`20116`)
-   - Account for metabolic syndrome by including heart disease, stroke, diabetes, general cancer i.e., ICD 9 and 10
-  
+   - Smoking (`
+
+We can use these to impute data ^ 
+
 **Metabolic syndrome is defined as:**
 Metabolic syndrome is a group of conditions that increase the risk of heart disease, stroke and type 2 diabetes. These conditions include high blood pressure, high blood sugar, too much fat around the waist, and high cholesterol or triglyceride levels.
 https://www.mayoclinic.org/diseases-conditions/metabolic-syndrome/symptoms-causes/syc-20351916
 
-> ⚠️ **Note**:
+> ⚠️ **Note** These are some things you can do but with imputation and a diff focus this is no longer NEEDED: 
 > Also extract features for metabolic syndrome i.e., heart disease, stroke, diabetes and cancer - removing the unhealthy lot as theres a lot of evidence that they may skew the results i.e., https://pmc.ncbi.nlm.nih.gov/articles/PMC8504077/
 > Then clean data to remove N/A values and to remove unhealthy (so those with the above diseases)
-> use cleaned data to calculate score BEFORE mapping to csf (just to test out)
 
 ---
 
