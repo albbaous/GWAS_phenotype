@@ -49,6 +49,11 @@ Once you've extracted the metabolite data, the next step is to map participants 
    - Smoking (`20116`)
    - Other health status variables as needed
 
+> ⚠️ **Note**:
+> Also extract features for metabolic syndrome i.e., heart disease, stroke, diabetes, general cancer so ICD9-10
+> Then clean data to remove N/A values and to remove unhealthy (so those with the above diseases)
+> use cleaned data to calculate score BEFORE mapping to csf
+
 2. **Integrate phenotype definitions**:
    - Map participants to CSF data
    - Use identifying characteristics for merging datasets
