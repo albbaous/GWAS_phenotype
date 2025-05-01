@@ -1,6 +1,7 @@
 # GWAS_prep
 A simple pipeline for extracting my phenotype — all the way through to running my GWAS. This is MetaboHealth as defined in Deelen et al., 2019
 
+# PART 1 - Phenotype
 ---
 
 ## Step 1 — Extracting Metabolites for Phenotype
@@ -67,22 +68,8 @@ https://www.mayoclinic.org/diseases-conditions/metabolic-syndrome/symptoms-cause
 > DO NOT remove relatives - do later 
 ---
 
-### Step 3 — Add weights
-Add weights from Deelen et al., paper to get score
-It has alreadt been calculated in van Holstein et al., 2024 using this 
-
-```
-MetaboHealth = (((Z(ln[XXL_VLDL_L]))*ln(0.80)) + ((Z(ln[S_HDL_L]))*ln(0.87)) + ((Z(ln[VLDL-D]))*ln(0.85)) + ((Z(ln[PUFA/FA]))*ln(0.78)) + ((Z(ln[Glucose]))*ln(1.16)) + 
-((Z(ln[Lactate]))*ln(1.06)) + ((Z(ln[Histidine]))*ln(0.93)) + ((Z(ln[Isoleucine]))*ln(1.23)) + ((Z(ln[Leucine]))*ln(0.82)) + ((Z(ln[Valine]))*ln(0.87)) + ((Z(ln[Phenylalanine]))*ln(1.13)) + ((Z(ln[Acetoacetate]))*ln(1.08)) + ((Z(ln[Albumin]))*ln(0.89)) + ((Z(ln[Glycoprotein_acetyls]))*ln(1.32))).
-Z states for z-scaling and ln states for natural logarithm.
-```
-
-### Biomarker Transformation Pipeline as described in Deelen et al., 2019 
-
+### Step 3 — Add weights and make score
 For each biomarker value, the following steps are applied:
-
----
-
 #### 1. Handle Zero Values
 
 If the raw observed value is 0, add 1 to make it compatible with log-transformation
@@ -93,8 +80,14 @@ If the raw observed value is 0, add 1 to make it compatible with log-transformat
 
 Scale to standard deviation units (mean = 0, sd = 1)
 
----
+#### 4.Add weights from Deelen et al., paper to get score
+It has alreadt been calculated in van Holstein et al., 2024 using this 
 
+```
+MetaboHealth = (((Z(ln[XXL_VLDL_L]))*ln(0.80)) + ((Z(ln[S_HDL_L]))*ln(0.87)) + ((Z(ln[VLDL-D]))*ln(0.85)) + ((Z(ln[PUFA/FA]))*ln(0.78)) + ((Z(ln[Glucose]))*ln(1.16)) + 
+((Z(ln[Lactate]))*ln(1.06)) + ((Z(ln[Histidine]))*ln(0.93)) + ((Z(ln[Isoleucine]))*ln(1.23)) + ((Z(ln[Leucine]))*ln(0.82)) + ((Z(ln[Valine]))*ln(0.87)) + ((Z(ln[Phenylalanine]))*ln(1.13)) + ((Z(ln[Acetoacetate]))*ln(1.08)) + ((Z(ln[Albumin]))*ln(0.89)) + ((Z(ln[Glycoprotein_acetyls]))*ln(1.32))).
+Z states for z-scaling and ln states for natural logarithm.
+```
 **Run the R script saved here as `metabohealth.R`** 
 - This does each step by step so I can see the resulting columns and then multiply them by each other
 - this creates a file phenotype dataframe at the end whereby we have all the metabolites, characteristics and then a score - this is not in the phenotype format i need for GWAS yet as certain values need to be imputed in original data to avoid scores of 0
