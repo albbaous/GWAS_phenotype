@@ -80,23 +80,23 @@ MetaboHealth = (((Z(ln[XXL_VLDL_L]))*ln(0.80)) + ((Z(ln[S_HDL_L]))*ln(0.87)) + (
 Z states for z-scaling and ln states for natural logarithm.
 ```
 
-### 🔄 Biomarker Transformation Pipeline
+### Biomarker Transformation Pipeline as described in Deelen et al., 2019 
 
 For each biomarker value, the following steps are applied:
 
 ---
 
-#### 1. Handle Zero Values (Optional Shift)
+#### 1. Handle Zero Values - with imputation i am NOT doing that
 
-If the raw value is 0 or less, add 1 to make it compatible with log-transformation:
+If the raw value is 0 or less, add 1 to make it compatible with log-transformation
 
 #### 2. Log Transformation
 
-Apply the natural logarithm to normalize the distribution:
+Apply the natural logarithm to normalize the distribution
 
 #### 3. Standardization (Z-score Scaling)
 
-Scale to standard deviation units (mean = 0, sd = 1):
+Scale to standard deviation units (mean = 0, sd = 1)
 
 ---
 
