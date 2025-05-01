@@ -86,13 +86,11 @@ For each biomarker value, the following steps are applied:
 
 ---
 
-#### 1. Handle Zero Values - with imputation i am NOT doing that
+#### 1. Handle Zero Values
 
 If the raw value is 0 or less, add 1 to make it compatible with log-transformation
 
 #### 2. Log Transformation
-
-Apply the natural logarithm to normalize the distribution
 
 #### 3. Standardization (Z-score Scaling)
 
