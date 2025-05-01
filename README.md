@@ -80,6 +80,50 @@ MetaboHealth = (((Z(ln[XXL_VLDL_L]))*ln(0.80)) + ((Z(ln[S_HDL_L]))*ln(0.87)) + (
 Z states for z-scaling and ln states for natural logarithm.
 ```
 
+### 🔄 Biomarker Transformation Pipeline
+
+For each biomarker value \( x_{ik} \) (for individual *i* and biomarker *k*), the following steps are applied:
+
+---
+
+#### 1. Handle Zero Values (Optional Shift)
+
+If the raw value is 0 or less, add 1 to make it compatible with log-transformation:
+
+\[
+x'_{ik} = x_{ik} + 1
+\]
+
+---
+
+#### 2. Log Transformation
+
+Apply the natural logarithm to normalize the distribution:
+
+\[
+\tilde{x}_{ik} = \log(x'_{ik})
+\]
+
+---
+
+#### 3. Standardization (Z-score Scaling)
+
+Scale to standard deviation units (mean = 0, sd = 1):
+
+\[
+z_{ik} = \frac{\tilde{x}_{ik} - \mu_k}{\sigma_k}
+\]
+
+Where:
+
+- \( \mu_k \) is the mean of \( \tilde{x}_{ik} \) across all individuals (for biomarker *k*)
+- \( \sigma_k \) is the standard deviation of \( \tilde{x}_{ik} \)
+
+---
+
+The final value \( z_{ik} \) is used in downstream analyses such as biomarker scoring.
+
+
 To do this you need: 
 1. Compute the natural logarithm (ln or log in R).
 2. Perform z-scaling (standardization) for each of the variables.
