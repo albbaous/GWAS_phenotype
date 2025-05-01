@@ -13,6 +13,7 @@ dx extract_dataset \
   --fields participant.eid,participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23473_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 \
   -o cohort_data2.csv
 ```
+> ⚠️ **Note**: This command also retrieves citrate (`participant.p23473_i0`) which is listed in the paper but has no weight so i remove IT later on 
 
 ### Explanation
 
@@ -44,17 +45,13 @@ Once you've extracted the metabolite data, the next step is to map participants 
 1. **Add and extract additional covariates** from UK Biobank
    - Age (`21003`)
    - Sex (`31`)
-   - BMI (`21001`)
    - 10 Principal Components (`22009_a1`) - all the way to 10
 
 ```bash
 dx extract_dataset project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ302v --fields participant.eid,participant.p21003_i0,participant.p31,participant.p21001_i0,participant.p22009_a1,participant.p22009_a2,participant.p22009_a3,participant.p22009_a4,participant.p22009_a5,participant.p22009_a6,participant.p22009_a7,participant.p22009_a8,participant.p22009_a9,participant.p22009_a10,participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23473_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 -o cohort_data6.csv
 ```
-
-- We can use these to impute data ^ 
+> ⚠️ **Note**: This command also retrieves BMI (`participant.p21001_i0`) which I remove later on as it does not appear much in GWAS 
 - Covariates in `.fam` files are Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype.
-
- 
 
 **Metabolic syndrome is defined as:**
 Metabolic syndrome is a group of conditions that increase the risk of heart disease, stroke and type 2 diabetes. These conditions include high blood pressure, high blood sugar, too much fat around the waist, and high cholesterol or triglyceride levels.
@@ -103,7 +100,7 @@ Scale to standard deviation units (mean = 0, sd = 1)
 - this creates a file phenotype dataframe at the end whereby we have all the metabolites, characteristics and then a score - this is not in the phenotype format i need for GWAS yet as certain values need to be imputed in original data to avoid scores of 0
 
 ---
-### Step 4 — Imputation using `mice` with BMI, Age, and Sex as predictors
+### Step 4 — Imputation using Age, and Sex as predictors
 - This was a bit more sophisticated so I wanted to get scores before diving into it but **run the script saved as `metabohealth_imputed.R` to get imputed results**
 
 **Explanation of the Parameters:**
