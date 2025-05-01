@@ -88,7 +88,7 @@ For each biomarker value, the following steps are applied:
 
 #### 1. Handle Zero Values
 
-If the raw value is 0 or less, add 1 to make it compatible with log-transformation
+If the raw observed value is 0, add 1 to make it compatible with log-transformation
 
 #### 2. Log Transformation
 
