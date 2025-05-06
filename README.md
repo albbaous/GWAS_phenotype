@@ -109,7 +109,21 @@ Z states for z-scaling and ln states for natural logarithm.
 4459327 4459327 0 0 1 Batch_b001
 ```
 
-`.pheno` file needs to be made in the same format (code for this in `metabohealth_imputed.R`), whereby phenotype is not just a batch number, but our phenotype score
+- `.pheno` file needs to be made in the same format (code for this in lines 273-286 in `metabohealth_imputed.R`), whereby phenotype is not just a batch number, but our phenotype score. It looks like this: 
+
+```
+FID	IID	Age	Sex	MetaboHealth_Score
+0	1000073	55	1	0.120481033803025
+0	1000312	62	0	-0.163868412744039
+```
+
+
+- `.cov` file also needs to be made in the same format (code for this in lines 289-297 in `metabohealth_imputed.R`). It looks like this: 
+
+```
+FID	IID	Age	Sex	PC1	PC2	PC3	PC4	PC5	PC6	PC7	PC8	PC9	PC10
+0	1000073	55	1	-12.5122	2.52381	-1.68065	1.15155-3.75587	-1.52478	-0.271479	-0.655341	-0.848979	0.933165
+```
 
 ---
 
