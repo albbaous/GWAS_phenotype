@@ -270,3 +270,17 @@ df_final <- df_extended2 %>%
          all_of(metabolites),     # Original metabolite values
          MetaboHealth_Score)      # Final score
 
+# Create final dataframe with the selected columns in the specified order
+df_final2 <- df_final %>%
+  # Rename 'eid' to 'IID'
+  rename(IID = eid) %>%
+  # Add 'FID' column with all values set to 0
+  mutate(FID = 0) %>%
+  # Select the desired columns in the specified order
+  select(FID, IID, Age, Sex,MetaboHealth_Score)
+
+# View the final dataframe
+head(df_final2)
+
+# Save the result to a file (e.g., tab-delimited)
+write.table(df_final2, "ukb_phenotype_data.pheno", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
