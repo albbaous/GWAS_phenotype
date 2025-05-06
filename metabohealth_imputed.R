@@ -274,24 +274,30 @@ df_final <- df_extended2 %>%
 df_phen <- df_final %>%
   # Rename 'eid' to 'IID'
   rename(IID = eid) %>%
-  # Add 'FID' column with all values set to 0
-  mutate(FID = 0) %>%
+  # Add 'FID' column with values same as 'IID' (i.e., both FID and IID will be the same)
+  mutate(FID = IID) %>%
   # Select the desired columns in the specified order
-  select(FID, IID, Age, Sex,MetaboHealth_Score)
+  select(FID, IID, Age, Sex, MetaboHealth_Score)
 
-# View the final dataframe
+# View the final phenotype dataframe
 head(df_phen)
 
-# Save the result to a file (e.g., tab-delimited)
+# Save the result to a file (e.g., tab-delimited .pheno)
 write.table(df_phen, "ukb_phenotype_data.pheno", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
 
 # Create COVARIATE file '.cov'
-# Create the COVARIATE file
 df_cov <- df_final %>%
   select(eid, Age, Sex, starts_with("PC")) %>%
+  # Rename 'eid' to 'IID'
   rename(IID = eid) %>%
-  mutate(FID = 0) %>%
+  # Add 'FID' column with values same as 'IID' (i.e., both FID and IID will be the same)
+  mutate(FID = IID) %>%
+  # Select the desired columns in the specified order
   select(FID, IID, everything())
 
+# View the final covariate dataframe
+head(df_cov)
+
+# Save the result to a file (e.g., tab-delimited .cov)
 write.table(df_cov, "ukb_covariates.cov", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
