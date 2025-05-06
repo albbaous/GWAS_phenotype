@@ -206,20 +206,20 @@ df_scaled <- df_log %>%
 df_extended <- df_scaled %>%
   # For each metabolite in the weights list, create a new column with the weight value
   mutate(
-    weight_XXL_VLDL_L = log(0.80),
-    weight_S_HDL_L    = log(0.87),
-    weight_VLDL_D     = log(0.85),
-    weight_PUFA_FA    = log(0.78),
-    weight_Glc        = log(1.16),
-    weight_Lac        = log(1.06),
-    weight_His        = log(0.93),
-    weight_Ile        = log(1.23),
-    weight_Leu        = log(0.82),
-    weight_Val        = log(0.87),
-    weight_Phe        = log(1.13),
-    weight_AcAce      = log(1.08),
-    weight_Alb        = log(0.89),
-    weight_GlycA      = log(1.32)
+    weight_XXL_VLDL_L = 0.80,
+    weight_S_HDL_L    = 0.87,
+    weight_VLDL_D     = 0.85,
+    weight_PUFA_FA    = 0.78,
+    weight_Glc        = 1.16,
+    weight_Lac        = 1.06,
+    weight_His        = 0.93,
+    weight_Ile        = 1.23,
+    weight_Leu        = 0.82,
+    weight_Val        = 0.87,
+    weight_Phe        = 1.13,
+    weight_AcAce      = 1.08,
+    weight_Alb        = 0.89,
+    weight_GlycA      = 1.32
   )
 
 # View the new dataframe with log-transformed metabolite values
