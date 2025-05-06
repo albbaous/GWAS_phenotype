@@ -114,8 +114,7 @@ Z states for z-scaling and ln states for natural logarithm.
 
 ```
 FID	IID	Age	Sex	MetaboHealth_Score
-0	1000073	55	1	0.120481033803025
-0	1000312	62	0	-0.163868412744039
+1000073	1000073	55	1	0.120481033803025
 ```
 
 
@@ -123,9 +122,30 @@ FID	IID	Age	Sex	MetaboHealth_Score
 
 ```
 FID	IID	Age	Sex	PC1	PC2	PC3	PC4	PC5	PC6	PC7	PC8	PC9	PC10
-0	1000073	55	1	-12.5122	2.52381	-1.68065	1.15155-3.75587	-1.52478	-0.271479	-0.655341	-0.848979	0.933165
+1000073	1000073	55	1	-12.5122	2.52381	-1.68065	1.15155-3.75587	-1.52478	-0.271479	-0.655341	-0.848979	0.933165
 ```
+### Step 6 — Running GWAS on subset of data 
+- On UKB Rap in Jupyter notebooks, I opened up the Terminal and ran the following:
+```
+conda install -c bioconda plink2 -y
+```
+```
+mkdir -p /mnt/project/plink_output
+```
+```
+plink2 \
+  --bfile "/mnt/project/Bulk/Genotype Results/Genotype calls/ukb22418_c22_b0_v2" \
+  --pheno /mnt/project/ukb_phenotype_data.pheno \
+  --pheno-name MetaboHealth_Score \
+  --covar /mnt/project/ukb_covariates.cov \
+  --covar-name Age,Sex,PC1-PC10 \
+  --glm \
+  --thin 0.05 \
+  --out /mnt/project/plink_output/metabo_analysis
 
+```
+- `--thin` is to pick out 0.05% of the chrom 22 data so i am testing on only a subset
+- this produces `metabo_analysis.log` and `metabo_analysis.MetaboHealth_Score.glm.linear`
 ---
 
 ## EXTRA - IGNORE 
