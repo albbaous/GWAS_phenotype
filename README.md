@@ -89,7 +89,7 @@ Z states for z-scaling and ln states for natural logarithm.
 **Run the R script saved here as `metabohealth.R`** 
 - This does each step by step so I can see the resulting columns and then multiply them by each other
 - this creates a file phenotype dataframe at the end whereby we have all the metabolites, characteristics and then a score - this is not in the phenotype format i need for GWAS yet as certain values need to be imputed in original data to avoid scores of 0
-
+- Towards the end it might look like `Alb` is missing at an alarming rate but it is oly 12%
 ---
 ### Step 4 — Imputation using Age, and Sex as predictors
 - This was a bit more sophisticated so I wanted to get scores before diving into it but **run the script saved as `metabohealth_imputed.R` to get imputed results**
