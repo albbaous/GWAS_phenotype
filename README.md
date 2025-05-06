@@ -102,7 +102,7 @@ Z states for z-scaling and ln states for natural logarithm.
 
 ---
 ### Step 5 — GWAS format 
--The `.fam` file in UKB has the following columns which correspond to Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype. 
+- The `.fam` file in UKB has the following columns which correspond to Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype. 
 
 ```
 ==> ukb22418_c9_b0_v2.fam <==
