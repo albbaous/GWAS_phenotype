@@ -93,6 +93,7 @@ Z states for z-scaling and ln states for natural logarithm.
 ---
 ### Step 4 — Imputation using Age, and Sex as predictors
 - This was a bit more sophisticated so I wanted to get scores before diving into it but **run the script saved as `metabohealth_imputed.R` to get imputed results**
+- followed this lovely tutorial: https://libguides.princeton.edu/R-Missingdata
 
 **Explanation of the Parameters:**
 
