@@ -96,9 +96,7 @@ Z states for z-scaling and ln states for natural logarithm.
 
 **Explanation of the Parameters:**
 
-- `data`: Your dataset with missing values.
-
-- `method`: The imputation method used (in this case, pmm stands for predictive mean matching).
+- `method`: The imputation method used (in this case, pmm stands for predictive mean matching and can alternatively use rf which is random forest).
 
 - `m`: The number of imputed datasets (typically 5 or more).
 
