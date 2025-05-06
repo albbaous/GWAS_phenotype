@@ -1,6 +1,7 @@
-# Load required libraries
+# Install packages if they are not already installed
 install.packages("mice")
 
+# Load required libraries
 library(tidyverse)
 library(tibble)
 library(mice)
@@ -48,13 +49,108 @@ biomarkers <- tribble(
 df <- df %>%
   rename_with(~ biomarkers$label[match(.x, biomarkers$column)], .cols = everything())
 
+# Remove the BMI column - justification for this https://www.nature.com/articles/s41467-022-29143-5
+df <- df %>%
+  select(-BMI)
+
+# Remove the Cit column - appears in the paper but has no weight 
+df <- df %>%
+  select(-Cit)
+
+# View the first few rows to confirm
+head(df)
+
+# Remove all those that have NA values in the 10 PC columns 
+# Remove rows that have NA values in the 10 PC columns (PC1 to PC10)
+df <- df %>%
+  filter(
+    !is.na(PC1) & !is.na(PC2) & !is.na(PC3) & !is.na(PC4) & 
+      !is.na(PC5) & !is.na(PC6) & !is.na(PC7) & !is.na(PC8) & 
+      !is.na(PC9) & !is.na(PC10)
+  )
+
+# View the first few rows to confirm the rows are removed
+head(df)
+
+
 # Define the metabolite columns (from the biomarkers table)
 metabolites <- c("Glc", "Lac", "His", "Ile", "Leu", "Val", "Phe", "AcAce", "Alb", 
-                 "GlycA", "Cit", "PUFA_FA", "XXL_VLDL_L", "S_HDL_L", "VLDL_D")
+                 "GlycA", "PUFA_FA", "XXL_VLDL_L", "S_HDL_L", "VLDL_D")
 
-# Prepare the data for imputation (BMI, Age, Sex, and metabolites)
+# Calculate the percentage of missing values and number of missing individuals for each metabolite
+missing_summary <- df %>%
+  summarise(across(
+    all_of(metabolites),
+    list(
+      missing_pct = ~ mean(is.na(.)) * 100,
+      missing_count = ~ sum(is.na(.))
+    ),
+    .names = "{.col}_{.fn}"
+  )) %>%
+  pivot_longer(
+    everything(),
+    names_to = c("Metabolite", "Metric"),
+    names_pattern = "^(.*)_(missing_pct|missing_count)$"
+  ) %>%
+  pivot_wider(names_from = Metric, values_from = value) %>%
+  arrange(desc(missing_pct))
+
+# Print the missing summary
+print(missing_summary)
+
+# Removal of individuals missing metabolites all 14 metabolites or 13 (exc Alb)
+# Save initial count
+n_before <- nrow(df)
+
+# Flag rows missing all 14 metabolites
+df$all_na_14 <- rowSums(is.na(df[metabolites])) == length(metabolites)
+percent_all_na_14 <- mean(df$all_na_14) * 100
+cat("Percentage with NA for all 14 metabolites:", percent_all_na_14, "%\n")
+
+# Define 13 metabolites excluding Alb
+metabolites_13 <- setdiff(metabolites, "Alb")
+
+# Flag rows missing all 13 metabolites (excluding Alb)
+df$all_na_13 <- rowSums(is.na(df[metabolites_13])) == length(metabolites_13)
+percent_all_na_13 <- mean(df$all_na_13) * 100
+cat("Percentage with NA for all 13 metabolites (excluding Alb):", percent_all_na_13, "%\n")
+
+# Number to remove
+n_remove <- sum(df$all_na_14 | df$all_na_13)
+cat("Number of individuals to remove:", n_remove, "\n")
+
+# Filter them out
+df <- df %>% filter(!(all_na_14 | all_na_13))
+
+# Report final count
+n_after <- nrow(df)
+cat("Number of individuals before filtering:", n_before, "\n")
+cat("Number of individuals after filtering:", n_after, "\n")
+
+# Recalculate the percentage of missing values and number of missing individuals for each metabolite
+missing_summary_post_filter <- df %>%
+  summarise(across(
+    all_of(metabolites),
+    list(
+      missing_pct = ~ mean(is.na(.)) * 100,
+      missing_count = ~ sum(is.na(.))
+    ),
+    .names = "{.col}_{.fn}"
+  )) %>%
+  pivot_longer(
+    everything(),
+    names_to = c("Metabolite", "Metric"),
+    names_pattern = "^(.*)_(missing_pct|missing_count)$"
+  ) %>%
+  pivot_wider(names_from = Metric, values_from = value) %>%
+  arrange(desc(missing_pct))
+
+# Print the updated missing summary
+print(missing_summary_post_filter)
+
+# Prepare the data for imputation (Age, Sex, and metabolites)
 df_imputation <- df %>%
-  select(c("BMI", "Age", "Sex", all_of(metabolites)))
+  select(c("Age", "Sex", all_of(metabolites)))
 
 # Create the predictor matrix for 'mice' (1 means predictor, 0 means not predictor)
 predictor_matrix <- matrix(1, nrow = ncol(df_imputation), ncol = ncol(df_imputation))
@@ -78,17 +174,36 @@ df <- df %>%
   select(-all_of(metabolites)) %>%
   bind_cols(df_imputed)
 
-# Create a new dataframe with log-transformed values in new columns
-df_log <- df %>%
+# Analysis as defined in Deelen et al., 2019 after clearing and imputing data 
+# Add 1 to any 0 values (this is the preprocessing step)
+df_adjusted <- df %>%
   mutate(
-    across(all_of(metabolites), log, .names = "log_{.col}")  # Create new columns with log-transformed metabolite values
+    across(
+      all_of(metabolites),
+      ~ ifelse(. == 0, . + 1, .),
+      .names = "adjusted_{.col}"
+    )
+  )
+
+# Log-transform the adjusted values (this is the actual log transformation)
+df_log <- df_adjusted %>%
+  mutate(
+    across(
+      starts_with("adjusted_"),
+      ~ log(.),
+      .names = "log_{.col}"
+    )
   )
 
 # View the new dataframe with log-transformed metabolite values
 head(df_log)
 
+# Standardize the log-transformed columns
+df_scaled <- df_log %>%
+  mutate(across(starts_with("log_"), scale, .names = "z_{.col}"))
+
 # Create a new dataframe that starts with df_log
-df_extended <- df_log %>%
+df_extended <- df_scaled %>%
   # For each metabolite in the weights list, create a new column with the weight value
   mutate(
     weight_XXL_VLDL_L = log(0.80),
@@ -111,30 +226,29 @@ df_extended <- df_log %>%
 head(df_extended)
 head(df_log)
 
-# Create Z-score columns: multiply log_metabolite by weight and standardize
+# Create Z-score columns: multiply log_metabolite by weight and standardize 
 df_extended <- df_extended %>%
   mutate(
-    Z_Glc        = scale(log_Glc        * weight_Glc),
-    Z_Lac        = scale(log_Lac        * weight_Lac),
-    Z_His        = scale(log_His        * weight_His),
-    Z_Ile        = scale(log_Ile        * weight_Ile),
-    Z_Leu        = scale(log_Leu        * weight_Leu),
-    Z_Val        = scale(log_Val        * weight_Val),
-    Z_Phe        = scale(log_Phe        * weight_Phe),
-    Z_AcAce      = scale(log_AcAce      * weight_AcAce),
-    Z_Alb        = scale(log_Alb        * weight_Alb),
-    Z_GlycA      = scale(log_GlycA      * weight_GlycA),
-    Z_Cit        = scale(log_Cit),  # No weight provided, so just standardize the log value
-    Z_PUFA_FA    = scale(log_PUFA_FA    * weight_PUFA_FA),
-    Z_XXL_VLDL_L = scale(log_XXL_VLDL_L * weight_XXL_VLDL_L),
-    Z_S_HDL_L    = scale(log_S_HDL_L    * weight_S_HDL_L),
-    Z_VLDL_D     = scale(log_VLDL_D     * weight_VLDL_D)
+    MH_Glc        = (scale(log_adjusted_Glc))        * (weight_Glc),
+    MH_Lac        = (scale(log_adjusted_Lac))        * (weight_Lac),
+    MH_His        = (scale(log_adjusted_His))        * (weight_His),
+    MH_Ile        = (scale(log_adjusted_Ile))        * (weight_Ile),
+    MH_Leu        = (scale(log_adjusted_Leu))        * (weight_Leu),
+    MH_Val        = (scale(log_adjusted_Val))        * (weight_Val),
+    MH_Phe        = (scale(log_adjusted_Phe))        * (weight_Phe),
+    MH_AcAce      = (scale(log_adjusted_AcAce))      * (weight_AcAce),
+    MH_Alb        = (scale(log_adjusted_Alb))        * (weight_Alb),
+    MH_GlycA      = (scale(log_adjusted_GlycA))      * (weight_GlycA),
+    MH_PUFA_FA    = (scale(log_adjusted_PUFA_FA))    * (weight_PUFA_FA),
+    MH_XXL_VLDL_L = (scale(log_adjusted_XXL_VLDL_L)) * (weight_XXL_VLDL_L),
+    MH_S_HDL_L    = (scale(log_adjusted_S_HDL_L))    * (weight_S_HDL_L),
+    MH_VLDL_D     = (scale(log_adjusted_VLDL_D))     * (weight_VLDL_D)
   )
 
-# Add MetaboHealth_Score by summing all Z_ columns
+# Add MetaboHealth_Score by summing all MH_ (metabohealth score) columns
 df_extended <- df_extended %>%
   mutate(
-    MetaboHealth_Score = rowSums(select(., starts_with("Z_")), na.rm = TRUE)
+    MetaboHealth_Score = rowSums(select(., starts_with("MH_")), na.rm = TRUE)
   )
 
 # Clean up column names in df_extended
@@ -142,26 +256,17 @@ df_extended2 <- df_extended %>%
   # Rename columns Age...2, Sex...3, and BMI...4 to Age, Sex, and BMI
   rename(
     Age = `Age...2`,
-    Sex = `Sex...3`,
-    BMI = `BMI...4`
+    Sex = `Sex...3`
   ) %>%
   # Remove the unwanted columns like BMI...15, Age...16, Sex...17
-  select(-`BMI...15`, -`Age...16`, -`Sex...17`)
+  select(-`Age...16`, -`Sex...17`)
 
 # Create final dataframe with selected columns in the specified order
 df_final <- df_extended2 %>%
   select(eid,                    # Participant ID
          Age,                     # Age
          Sex,                     # Sex
-         BMI,                     # BMI
          starts_with("PC"),       # Principal components PC1–PC10
          all_of(metabolites),     # Original metabolite values
          MetaboHealth_Score)      # Final score
 
-# Filter out rows where MetaboHealth_Score is 0 and create a new dataframe
-df_no_zero_score <- df_final %>%
-  filter(MetaboHealth_Score != 0)
-
-# Print the number of rows in df_final and df_no_zero_score
-cat("Number of rows in df_final: ", nrow(df_final), "\n")
-cat("Number of rows in df_no_zero_score: ", nrow(df_no_zero_score), "\n")
