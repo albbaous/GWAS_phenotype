@@ -161,7 +161,7 @@ rownames(predictor_matrix) <- colnames(df_imputation)
 predictor_matrix[which(colnames(predictor_matrix) %in% metabolites), which(colnames(predictor_matrix) %in% metabolites)] <- 0
 
 # Perform imputation using the 'mice' function
-imputed_data <- mice(df_imputation, method = 'pmm', m = 5, predictorMatrix = predictor_matrix, verbose = FALSE)
+imputed_data <- mice(df_imputation, method = 'rf', m = 5, predictorMatrix = predictor_matrix, verbose = FALSE)
 
 # Extract the imputed data (choose the first imputed dataset)
 df_imputed <- complete(imputed_data, action = 1)
