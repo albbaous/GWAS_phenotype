@@ -12,10 +12,18 @@ dx extract_dataset \
   --fields participant.eid,participant.p41202, participant.p41204, participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23473_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 \
   -o cohort_data2.csv
 ```
-> ⚠️ **Note**: This command also retrieves citrate (`participant.p23473_i0`) which is listed in the paper but has no weight so i remove IT later on
-> this command also retrieves the icd-10 codes main (`participant.p41202`) and secondary (`participant.p41204`) but this paper also did the same thing https://pmc.ncbi.nlm.nih.gov/articles/instance/10577770/bin/bmjment-2023-300719supp001.pdf
-> In the paper, they also include any medication associated with dementia so they filter for that but i am not doing this as a lot of the medications for dementia are antipsychotics or sleep medication i.e., modafinil so it may skew results. I will just stick to diagnosed individuals.
-> Later on in the code we filter out for the following dementia related ICD 10 codes:
+> ⚠️ **Note**:  
+> This command also retrieves **citrate** (`participant.p23473_i0`), which is listed in the paper but has **no weight**, so I remove it later on.  
+>  
+> It also retrieves the **ICD-10 codes** for both main (`participant.p41202`) and secondary (`participant.p41204`) diagnoses. This approach is consistent with the methodology in the following paper:  
+>  [Supplementary Material – BMJ Mental Health 2023](https://pmc.ncbi.nlm.nih.gov/articles/instance/10577770/bin/bmjment-2023-300719supp001.pdf)  
+>  
+> In that paper, they also included any **medications associated with dementia** to help define cases. However, I am *not* doing this, as many dementia medications are also used for **other indications** (e.g., antipsychotics or stimulants like **modafinil**), which may **skew results**.  
+>  
+> Instead, I will focus strictly on **diagnosed individuals** based on hospital codes.  
+>  
+>  **Later in the code**, we filter out individuals with the following **dementia-related ICD-10 codes**:
+
 ```
 A810, F00, F000, F001, F002,
 F009, F01, F010, F011, F012,
