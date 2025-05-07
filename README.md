@@ -2,29 +2,34 @@
 A simple pipeline for extracting my phenotype — all the way through to running my GWAS. This is MetaboHealth as defined in Deelen et al., 2019
 
 # Phenotype
+This is a breakdown of the logic behind the script titled metabohealth.R
+
 ## Step 1 — Extracting Metabolites for Phenotype
+To get the correct data from **auth.dnanexus.com** (UK Biobank Research Analysis Platform), you need to use the `dx extract_dataset` command. 
 
-To get the correct data from **auth.dnanexus.com** (UK Biobank Research Analysis Platform), you need to use the following command. This extracts all **14 metabolites** listed in the paper by *Deelen et al., 2019* (see [Supplement, page 30](https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-019-11311-9/MediaObjects/41467_2019_11311_MOESM1_ESM.pdf)):
-
-**Make sure to add and extract some essential covariates** from UK Biobank
-   - Age (`21003`)
-   - Sex (`31`)
-   - 10 Principal Components (`22009_a1`) - all the way to 10
-   - Covariates in `.fam` files are Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype.
+### What’s Extracted:
+- **14 metabolites** listed in the paper by *Deelen et al., 2019* (see [Supplement, page 30](https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-019-11311-9/MediaObjects/41467_2019_11311_MOESM1_ESM.pdf)):
+- Covariates:
+  - Age (`21003`)
+  - Sex (`31`)
+  - 10 Genetic PCs (`22009_a1` to `22009_a10`)
+  - ICD-10 codes (`41202`, `41204`)
+  - Covariates in `.fam` files are Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype.
 
 ```bash
 dx extract_dataset project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ302v --fields participant.eid,participant.p41202,participant.p41204,participant.p21003_i0,participant.p31,participant.p22009_a1,participant.p22009_a2,participant.p22009_a3,participant.p22009_a4,participant.p22009_a5,participant.p22009_a6,participant.p22009_a7,participant.p22009_a8,participant.p22009_a9,participant.p22009_a10,participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 -o cohort_data.csv
 ```
+
 > ⚠️ **Note**:  
 >  
-> It also retrieves the **ICD-10 codes** for both main (`participant.p41202`) and secondary (`participant.p41204`) diagnoses. This approach is consistent with the methodology in the following paper:  
+> Also retrieves **ICD-10 codes** for both main (`participant.p41202`) and secondary (`participant.p41204`) diagnoses. This approach is consistent with the methodology in the following paper:  
 >  [Supplementary Material – BMJ Mental Health 2023](https://pmc.ncbi.nlm.nih.gov/articles/instance/10577770/bin/bmjment-2023-300719supp001.pdf)  
 >  
 > In that paper, they also included any **medications associated with dementia** to help define cases. However, I am *not* doing this, as many dementia medications are also used for **other indications** (e.g., antipsychotics or stimulants like **modafinil**), which may **skew results**.  
 >  
 > Instead, I will focus strictly on **diagnosed individuals** based on hospital codes.  
 >  
->  **Later in the code**, we filter out individuals with the following **dementia-related ICD-10 codes**:
+>  **Later in the code**, we filter out individuals with the following **dementia-related ICD-10 codes** the meanings of which are described in `icd10_descriptions`:
 
 ```
 A810, F00, F000, F001, F002,
@@ -60,8 +65,8 @@ record
   - i.e, `grep '100010' cohort2.csv` and check they are all the same as column names in UKB rap have metabolite name
 ---
 
-### Step 2 — Figure out how to filter
-- We will filter out based on cases of dementia rather than anything else. Suggestions have been made to filter on metabolic syndrome.
+### Step 2 (just notes)— Figure out how to filter
+- We will filter out based on cases of dementia by ICD10 code rather than anything else. Suggestions have been made to filter on metabolic syndrome.
   
 **Metabolic syndrome is defined as:**
 Metabolic syndrome is a group of conditions that increase the risk of heart disease, stroke and type 2 diabetes. These conditions include high blood pressure, high blood sugar, too much fat around the waist, and high cholesterol or triglyceride levels.
@@ -79,7 +84,7 @@ https://www.mayoclinic.org/diseases-conditions/metabolic-syndrome/symptoms-cause
 > DO NOT remove relatives - do later 
 ---
 
-### Step 3 — Add weights and make score
+### Step 3 (on local R script) — Add weights and make score 
 For each biomarker value, the following steps are applied:
 #### 1. Handle Zero Values
 
@@ -99,14 +104,16 @@ MetaboHealth = (((Z(ln[XXL_VLDL_L]))*ln(0.80)) + ((Z(ln[S_HDL_L]))*ln(0.87)) + (
 ((Z(ln[Lactate]))*ln(1.06)) + ((Z(ln[Histidine]))*ln(0.93)) + ((Z(ln[Isoleucine]))*ln(1.23)) + ((Z(ln[Leucine]))*ln(0.82)) + ((Z(ln[Valine]))*ln(0.87)) + ((Z(ln[Phenylalanine]))*ln(1.13)) + ((Z(ln[Acetoacetate]))*ln(1.08)) + ((Z(ln[Albumin]))*ln(0.89)) + ((Z(ln[Glycoprotein_acetyls]))*ln(1.32))).
 Z states for z-scaling and ln states for natural logarithm.
 ```
+
 **Run the R script saved here as `metabohealth.R`** 
 - This does each step by step so I can see the resulting columns and then multiply them by each other
 - this creates a file phenotype dataframe at the end whereby we have all the metabolites, characteristics and then a score - this is not in the phenotype format i need for GWAS yet as certain values need to be imputed in original data to avoid scores of 0
 - Towards the end it might look like `Alb` is missing at an alarming rate but it is oly 12%
+  
 ---
-### Step 4 — Imputation using Age, and Sex as predictors
-- This was a bit more sophisticated so I wanted to get scores before diving into it but **run the script saved as `metabohealth_imputed.R` to get imputed results**
-- followed this lovely tutorial: https://libguides.princeton.edu/R-Missingdata
+### Step 4 (on local R script)— Imputation using Age, and Sex as predictors 
+- Followed this lovely tutorial: https://libguides.princeton.edu/R-Missingdata
+- This is all in 'metabohealth.R'
 
 **Explanation of the Parameters:**
 
@@ -115,7 +122,7 @@ Z states for z-scaling and ln states for natural logarithm.
 - `m`: The number of imputed datasets (typically 5 or more).
 
 ---
-### Step 5 — GWAS format 
+### Step 5 (on local R script)— GWAS format 
 - The `.fam` file in UKB has the following columns which correspond to Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype. 
 
 ```
@@ -137,7 +144,7 @@ FID	IID	Age	Sex	MetaboHealth_Score
 FID	IID	Age	Sex	PC1	PC2	PC3	PC4	PC5	PC6	PC7	PC8	PC9	PC10
 1000073	1000073	55	1	-12.5122	2.52381	-1.68065	1.15155-3.75587	-1.52478	-0.271479	-0.655341	-0.848979	0.933165
 ```
-### Step 6 — Running GWAS on subset of data 
+### Step 6 (on UKB RAP) — Running GWAS on subset of data 
 - On UKB Rap in Jupyter notebooks, I opened up the Terminal and ran the following:
 ```
 conda install -c bioconda plink2 -y
