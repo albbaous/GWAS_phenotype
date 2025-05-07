@@ -69,15 +69,18 @@ Once you've extracted the metabolite data, the next step is to map participants 
 ```bash
 dx extract_dataset project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ302v --fields participant.eid,participant.p21003_i0,participant.p31,participant.p21001_i0,participant.p22009_a1,participant.p22009_a2,participant.p22009_a3,participant.p22009_a4,participant.p22009_a5,participant.p22009_a6,participant.p22009_a7,participant.p22009_a8,participant.p22009_a9,participant.p22009_a10,participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23473_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 -o cohort_data6.csv
 ```
-> ⚠️ **Note**: This command also retrieves BMI (`participant.p21001_i0`) which I remove later on as it does not appear much in GWAS 
-- Covariates in `.fam` files are Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype.
+> ⚠️ **Note**: This command also retrieves BMI (`participant.p21001_i0`) which I remove later on as it does not appear much in GWAS
+>
+> Covariates in `.fam` files are Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype.
 
 **Metabolic syndrome is defined as:**
 Metabolic syndrome is a group of conditions that increase the risk of heart disease, stroke and type 2 diabetes. These conditions include high blood pressure, high blood sugar, too much fat around the waist, and high cholesterol or triglyceride levels.
 https://www.mayoclinic.org/diseases-conditions/metabolic-syndrome/symptoms-causes/syc-20351916
 
-> ⚠️ **Note** These are some things you can do but with imputation and a diff focus this is no longer NEEDED: 
+> ⚠️ **Note** These are some things you can do but with imputation and a diff focus this is no longer NEEDED:
+>
 > Also extract features for metabolic syndrome i.e., heart disease, stroke, diabetes and cancer - removing the unhealthy lot as theres a lot of evidence that they may skew the results i.e., https://pmc.ncbi.nlm.nih.gov/articles/PMC8504077/
+>
 > Then clean data to remove N/A values and to remove unhealthy (so those with the above diseases)
 
 > **Instead**
