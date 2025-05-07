@@ -171,13 +171,13 @@ plink2 \
 ## EXTRA - IGNORE 
 Just saving these here as it is the UKB IDs mapped to the names of variables in the Deelen paper: 
 ```
-library(tibble)
-
 biomarkers <- tribble(
   ~column,                    ~label,
   "participant.eid",          "eid",
   "participant.p21003_i0",    "Age",
   "participant.p31",          "Sex",
+  "participant.p41202",       "ICD10_Main",
+  "participant.p41204",       "ICD10_Secondary",
   "participant.p22009_a1",    "PC1",
   "participant.p22009_a2",    "PC2",
   "participant.p22009_a3",    "PC3",
