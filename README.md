@@ -51,7 +51,7 @@ record
 
 ### Step 2 (just notes)— Exclude Dementia Diagnoses and pick filters
 
-We exclude individuals with these ICD-10 codes related to dementia:
+We exclude individuals with these ICD-10 codes (described in `icd10_meaning`) related to dementia:
 
 ```
 A810, F00, F000, F001, F002, F009, F01, F010, F011, F012, F013, F018, F019,
