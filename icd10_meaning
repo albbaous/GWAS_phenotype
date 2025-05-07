@@ -1,0 +1,19 @@
+| Code                | Description                                                                                                                |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **A810**            | Creutzfeldt-Jakob disease (a prion disease causing rapidly progressive dementia)                                           |
+| **F00**             | Dementia in Alzheimer's disease (general)                                                                                  |
+| **F000** – **F002** | Subtypes of Alzheimer's dementia (early/late onset, atypical, mixed)                                                       |
+| **F009**            | Unspecified dementia in Alzheimer's disease                                                                                |
+| **F01** – **F013**  | Vascular dementia and its subtypes (due to cerebrovascular disease)                                                        |
+| **F018** – **F019** | Other/unspecified vascular dementia                                                                                        |
+| **F02** – **F024**  | Dementia in other diseases (e.g., Huntington's, Parkinson's, HIV, etc.)                                                    |
+| **F028**            | Other specified dementias                                                                                                  |
+| **F03**             | Unspecified dementia                                                                                                       |
+| **F051**            | Delirium superimposed on dementia                                                                                          |
+| **F106**            | Mental and behavioral disorders due to use of alcohol, with amnesic syndrome (including Korsakoff’s psychosis)             |
+| **G30**             | Alzheimer's disease                                                                                                        |
+| **G300** – **G301** | Early and late onset Alzheimer's                                                                                           |
+| **G308** – **G309** | Other and unspecified Alzheimer's                                                                                          |
+| **G310** – **G311** | Circumscribed brain atrophy (e.g., Pick’s disease)                                                                         |
+| **G318**            | Other specified degenerative diseases of the nervous system                                                                |
+| **I673**            | Cerebral infarction due to unspecified occlusion or stenosis of precerebral arteries (often linked with vascular dementia) |
