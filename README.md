@@ -9,10 +9,22 @@ To get the correct data from **auth.dnanexus.com** (UK Biobank Research Analysis
 ```bash
 dx extract_dataset \
   project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ302v \
-  --fields participant.eid,participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23473_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 \
+  --fields participant.eid,participant.p41202, participant.p41204, participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23473_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 \
   -o cohort_data2.csv
 ```
-> ⚠️ **Note**: This command also retrieves citrate (`participant.p23473_i0`) which is listed in the paper but has no weight so i remove IT later on 
+> ⚠️ **Note**: This command also retrieves citrate (`participant.p23473_i0`) which is listed in the paper but has no weight so i remove IT later on
+> this command also retrieves the icd-10 codes main (`participant.p41202`) and secondary (`participant.p41204`) but this paper also did the same thing https://pmc.ncbi.nlm.nih.gov/articles/instance/10577770/bin/bmjment-2023-300719supp001.pdf
+> In the paper, they also include any medication associated with dementia so they filter for that but i am not doing this as a lot of the medications for dementia are antipsychotics or sleep medication i.e., modafinil so it may skew results. I will just stick to diagnosed individuals.
+> Later on in the code we filter out for the following dementia related ICD 10 codes:
+```
+A810, F00, F000, F001, F002,
+F009, F01, F010, F011, F012,
+F013, F018, F019, F02, F020,
+F021, F022, F023, F024, F028,
+F03, F051, F106, G30, G300,
+G301, G308, G309, G310,
+G311, G318, I673
+```
 
 ### Explanation
 
