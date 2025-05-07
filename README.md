@@ -21,27 +21,15 @@ dx extract_dataset project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ3
 ```
 
 > ⚠️ **Note**:  
->  
-> Also retrieves **ICD-10 codes** for both main (`participant.p41202`) and secondary (`participant.p41204`) diagnoses. This approach is consistent with the methodology in the following paper:  
->  [Supplementary Material – BMJ Mental Health 2023](https://pmc.ncbi.nlm.nih.gov/articles/instance/10577770/bin/bmjment-2023-300719supp001.pdf)  
->  
+>   
+> Also retrieves ICD-10 diagnoses:
+> - `41202`: main diagnosis
+> - `41204`: secondary diagnosis  
+> This matches methods in [BMJ Mental Health 2023](https://pmc.ncbi.nlm.nih.gov/articles/instance/10577770/bin/bmjment-2023-300719supp001.pdf)
+>
 > In that paper, they also included any **medications associated with dementia** to help define cases. However, I am *not* doing this, as many dementia medications are also used for **other indications** (e.g., antipsychotics or stimulants like **modafinil**), which may **skew results**.  
->  
-> Instead, I will focus strictly on **diagnosed individuals** based on hospital codes.  
->  
->  **Later in the code**, we filter out individuals with the following **dementia-related ICD-10 codes** the meanings of which are described in `icd10_descriptions`:
 
-```
-A810, F00, F000, F001, F002,
-F009, F01, F010, F011, F012,
-F013, F018, F019, F02, F020,
-F021, F022, F023, F024, F028,
-F03, F051, F106, G30, G300,
-G301, G308, G309, G310,
-G311, G318, I673
-```
-
-### Command Explanation
+### dx Command Explanation
 
 - `dx extract_dataset`: DNAnexus CLI command for extracting a dataset from RAP  
 - `project-...`: The ID of your RAP project, extracted using:
@@ -57,16 +45,23 @@ record
 - `--fields`: List of fields to extract (in `participant.p[FIELD_ID]_i0` format)  
 - `-o`: Specifies the output CSV file  
 
-> ⚠️ **Note**: This command only retrieves metabolite values.  
->
-> You will also need to extract baseline characteristics like age, sex, and BMI to complete phenotype mapping
->
-> You can check values by mirroring/building the same cohort on UKB RAP, selecting a participant and seeing if the values are the same.
+> ⚠️ **Note**: You can check values by mirroring/building the same cohort on UKB RAP, selecting a participant and seeing if the values are the same.
   - i.e, `grep '100010' cohort2.csv` and check they are all the same as column names in UKB rap have metabolite name
 ---
 
-### Step 2 (just notes)— Figure out how to filter
-- We will filter out based on cases of dementia by ICD10 code rather than anything else. Suggestions have been made to filter on metabolic syndrome.
+### Step 2 (just notes)— Exclude Dementia Diagnoses and pick filters
+
+We exclude individuals with these ICD-10 codes related to dementia:
+
+```
+A810, F00, F000, F001, F002, F009, F01, F010, F011, F012, F013, F018, F019,
+F02, F020, F021, F022, F023, F024, F028, F03, F051, F106, G30, G300, G301,
+G308, G309, G310, G311, G318, I673
+```
+
+Focus is only on **hospital-diagnosed cases**, not medications.
+
+- Suggestions have been made to filter on metabolic syndrome.
   
 **Metabolic syndrome is defined as:**
 Metabolic syndrome is a group of conditions that increase the risk of heart disease, stroke and type 2 diabetes. These conditions include high blood pressure, high blood sugar, too much fat around the waist, and high cholesterol or triglyceride levels.
@@ -77,13 +72,12 @@ https://www.mayoclinic.org/diseases-conditions/metabolic-syndrome/symptoms-cause
 > Also extract features for metabolic syndrome i.e., heart disease, stroke, diabetes and cancer - removing the unhealthy lot as theres a lot of evidence that they may skew the results i.e., https://pmc.ncbi.nlm.nih.gov/articles/PMC8504077/
 >
 > Then clean data to remove N/A values and to remove unhealthy (so those with the above diseases)
-
-> **Instead**
-> DO NOT remove NAs- impute them
-> DO NOT remove unhealthy - focus on everyone
-> DO NOT remove relatives - do later 
+>
+> ❌ Do NOT remove:
+> - Missing data → instead, **impute**
+> - Unhealthy individuals → **include all**
+> - Relatives → remove **later** if needed
 ---
-
 ### Step 3 (on local R script) — Add weights and make score 
 For each biomarker value, the following steps are applied:
 #### 1. Handle Zero Values
@@ -97,13 +91,6 @@ If the raw observed value is 0, add 1 to make it compatible with log-transformat
 Scale to standard deviation units (mean = 0, sd = 1)
 
 #### 4.Add weights from Deelen et al., paper to get score
-It has alreadt been calculated in van Holstein et al., 2024 using this 
-
-```
-MetaboHealth = (((Z(ln[XXL_VLDL_L]))*ln(0.80)) + ((Z(ln[S_HDL_L]))*ln(0.87)) + ((Z(ln[VLDL-D]))*ln(0.85)) + ((Z(ln[PUFA/FA]))*ln(0.78)) + ((Z(ln[Glucose]))*ln(1.16)) + 
-((Z(ln[Lactate]))*ln(1.06)) + ((Z(ln[Histidine]))*ln(0.93)) + ((Z(ln[Isoleucine]))*ln(1.23)) + ((Z(ln[Leucine]))*ln(0.82)) + ((Z(ln[Valine]))*ln(0.87)) + ((Z(ln[Phenylalanine]))*ln(1.13)) + ((Z(ln[Acetoacetate]))*ln(1.08)) + ((Z(ln[Albumin]))*ln(0.89)) + ((Z(ln[Glycoprotein_acetyls]))*ln(1.32))).
-Z states for z-scaling and ln states for natural logarithm.
-```
 
 **Run the R script saved here as `metabohealth.R`** 
 - This does each step by step so I can see the resulting columns and then multiply them by each other
