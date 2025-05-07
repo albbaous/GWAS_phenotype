@@ -80,6 +80,8 @@ https://www.mayoclinic.org/diseases-conditions/metabolic-syndrome/symptoms-cause
 ---
 ### Step 3 (on local R script) — Add weights and make score 
 For each biomarker value, the following steps are applied:
+
+---
 #### 1. Handle Zero Values
 
 If the raw observed value is 0, add 1 to make it compatible with log-transformation
@@ -92,7 +94,9 @@ Scale to standard deviation units (mean = 0, sd = 1)
 
 #### 4.Add weights from Deelen et al., paper to get score
 
-**Run the R script saved here as `metabohealth.R`** 
+---
+
+### **Run the R script saved here as `metabohealth.R`** 
 - This does each step by step so I can see the resulting columns and then multiply them by each other
 - this creates a file phenotype dataframe at the end whereby we have all the metabolites, characteristics and then a score - this is not in the phenotype format i need for GWAS yet as certain values need to be imputed in original data to avoid scores of 0
 - Towards the end it might look like `Alb` is missing at an alarming rate but it is oly 12%
