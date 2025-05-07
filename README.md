@@ -51,7 +51,9 @@ record
 - `-o`: Specifies the output CSV file  
 
 > ⚠️ **Note**: This command only retrieves metabolite values.  
+>
 > You will also need to extract baseline characteristics like age, sex, and BMI to complete phenotype mapping
+>
 > You can check values by mirroring/building the same cohort on UKB RAP, selecting a participant and seeing if the values are the same.
   - i.e, `grep '100010' cohort2.csv` and check they are all the same as column names in UKB rap have metabolite name
 ---
