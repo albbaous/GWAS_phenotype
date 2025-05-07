@@ -121,7 +121,7 @@ Scale to standard deviation units (mean = 0, sd = 1)
 4459327 4459327 0 0 1 Batch_b001
 ```
 
-- `.pheno` file needs to be made in the same format (code for this in lines 273-286 in `metabohealth_imputed.R`), whereby phenotype is not just a batch number, but our phenotype score. It looks like this: 
+- `.pheno` file needs to be made in the same format (code for this in lines 254-269 in `metabohealth_imputed.R`), whereby phenotype is not just a batch number, but our phenotype score. It looks like this: 
 
 ```
 FID	IID	Age	Sex	MetaboHealth_Score
@@ -129,7 +129,7 @@ FID	IID	Age	Sex	MetaboHealth_Score
 ```
 
 
-- `.cov` file also needs to be made in the same format (code for this in lines 289-297 in `metabohealth_imputed.R`). It looks like this: 
+- `.cov` file also needs to be made in the same format (code for this in lines 260 onwards in `metabohealth_imputed.R`). It looks like this: 
 
 ```
 FID	IID	Age	Sex	PC1	PC2	PC3	PC4	PC5	PC6	PC7	PC8	PC9	PC10
