@@ -6,14 +6,16 @@ A simple pipeline for extracting my phenotype — all the way through to running
 
 To get the correct data from **auth.dnanexus.com** (UK Biobank Research Analysis Platform), you need to use the following command. This extracts all **14 metabolites** listed in the paper by *Deelen et al., 2019* (see [Supplement, page 30](https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-019-11311-9/MediaObjects/41467_2019_11311_MOESM1_ESM.pdf)):
 
+**Make sure to add and extract some essential covariates** from UK Biobank
+   - Age (`21003`)
+   - Sex (`31`)
+   - 10 Principal Components (`22009_a1`) - all the way to 10
+   - Covariates in `.fam` files are Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype.
+
 ```bash
-dx extract_dataset \
-  project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ302v \
-  --fields participant.eid,participant.p41202, participant.p41204, participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23473_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 \
-  -o cohort_data2.csv
+dx extract_dataset project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ302v --fields participant.eid,participant.p41202,participant.p41204,participant.p21003_i0,participant.p31,participant.p22009_a1,participant.p22009_a2,participant.p22009_a3,participant.p22009_a4,participant.p22009_a5,participant.p22009_a6,participant.p22009_a7,participant.p22009_a8,participant.p22009_a9,participant.p22009_a10,participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 -o cohort_data.csv
 ```
 > ⚠️ **Note**:  
-> This command also retrieves **citrate** (`participant.p23473_i0`), which is listed in the paper but has **no weight**, so I remove it later on.  
 >  
 > It also retrieves the **ICD-10 codes** for both main (`participant.p41202`) and secondary (`participant.p41204`) diagnoses. This approach is consistent with the methodology in the following paper:  
 >  [Supplementary Material – BMJ Mental Health 2023](https://pmc.ncbi.nlm.nih.gov/articles/instance/10577770/bin/bmjment-2023-300719supp001.pdf)  
@@ -34,7 +36,7 @@ G301, G308, G309, G310,
 G311, G318, I673
 ```
 
-### Explanation
+### Command Explanation
 
 - `dx extract_dataset`: DNAnexus CLI command for extracting a dataset from RAP  
 - `project-...`: The ID of your RAP project, extracted using:
@@ -58,23 +60,9 @@ record
   - i.e, `grep '100010' cohort2.csv` and check they are all the same as column names in UKB rap have metabolite name
 ---
 
-### Step 2 — Adding some baseline characteristics/covariates to the command and proceeding to filter on those
-
-Once you've extracted the metabolite data, the next step is to map participants to those on the UoM db
-#### Actions
-
-1. **Add and extract additional covariates** from UK Biobank
-   - Age (`21003`)
-   - Sex (`31`)
-   - 10 Principal Components (`22009_a1`) - all the way to 10
-
-```bash
-dx extract_dataset project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ302v --fields participant.eid,participant.p41202, participant.p41204,participant.p21003_i0,participant.p31,participant.p21001_i0,participant.p22009_a1,participant.p22009_a2,participant.p22009_a3,participant.p22009_a4,participant.p22009_a5,participant.p22009_a6,participant.p22009_a7,participant.p22009_a8,participant.p22009_a9,participant.p22009_a10,participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23473_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 -o cohort_data6.csv
-```
-> ⚠️ **Note**: This command also retrieves BMI (`participant.p21001_i0`) which I remove later on as it does not appear much in GWAS
->
-> Covariates in `.fam` files are Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype.
-
+### Step 2 — Figure out how to filter
+- We will filter out based on cases of dementia rather than anything else. Suggestions have been made to filter on metabolic syndrome.
+  
 **Metabolic syndrome is defined as:**
 Metabolic syndrome is a group of conditions that increase the risk of heart disease, stroke and type 2 diabetes. These conditions include high blood pressure, high blood sugar, too much fat around the waist, and high cholesterol or triglyceride levels.
 https://www.mayoclinic.org/diseases-conditions/metabolic-syndrome/symptoms-causes/syc-20351916
@@ -183,7 +171,6 @@ biomarkers <- tribble(
   "participant.eid",          "eid",
   "participant.p21003_i0",    "Age",
   "participant.p31",          "Sex",
-  "participant.p21001_i0",    "BMI",
   "participant.p22009_a1",    "PC1",
   "participant.p22009_a2",    "PC2",
   "participant.p22009_a3",    "PC3",
@@ -204,7 +191,6 @@ biomarkers <- tribble(
   "participant.p23476_i0",    "AcAce",
   "participant.p30600_i0",    "Alb",
   "participant.p23480_i0",    "GlycA",
-  "participant.p23473_i0",    "Cit",
   "participant.p23453_i0",    "PUFA_FA",
   "participant.p23482_i0",    "XXL_VLDL_L",
   "participant.p23573_i0",    "S_HDL_L",
