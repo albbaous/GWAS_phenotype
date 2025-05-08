@@ -1,4 +1,4 @@
-# GWAS_prep
+# GWAS Phenotype 
 A simple pipeline for extracting my phenotype — all the way through to running my GWAS. This is MetaboHealth as defined in Deelen et al., 2019
 
 # Phenotype
