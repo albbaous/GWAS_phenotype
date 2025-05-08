@@ -1,9 +1,6 @@
 # GWAS Phenotype 
 A simple pipeline for extracting my phenotype — all the way through to running my GWAS. This is MetaboHealth as defined in Deelen et al., 2019
 
-# Phenotype
-This is a breakdown of the logic behind the script titled metabohealth.R
-
 ## Step 1 — Extracting Metabolites for Phenotype
 To get the correct data from **auth.dnanexus.com** (UK Biobank Research Analysis Platform), you need to use the `dx extract_dataset` command. 
 
