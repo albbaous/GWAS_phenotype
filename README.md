@@ -16,6 +16,13 @@ To get the correct data from **auth.dnanexus.com** (UK Biobank Research Analysis
   - ICD-10 codes (`41202`, `41204`)
   - Covariates in `.fam` files are Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype.
 
+Command with ICD-10 to account for dementia:
+```bash
+dx extract_dataset project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ302v --fields participant.eid,participant.p41202,participant.p41204,participant.p21003_i0,participant.p31,participant.p22009_a1,participant.p22009_a2,participant.p22009_a3,participant.p22009_a4,participant.p22009_a5,participant.p22009_a6,participant.p22009_a7,participant.p22009_a8,participant.p22009_a9,participant.p22009_a10,participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 -o cohort_data.csv
+```
+
+Command without ICD-1O (IF YOU USE THIS CONTINUE WITH `metabohealth_withoutICD.R` instead of `metabohealth.R` - logic is all the same): 
+
 ```bash
 dx extract_dataset project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ302v --fields participant.eid,participant.p41202,participant.p41204,participant.p21003_i0,participant.p31,participant.p22009_a1,participant.p22009_a2,participant.p22009_a3,participant.p22009_a4,participant.p22009_a5,participant.p22009_a6,participant.p22009_a7,participant.p22009_a8,participant.p22009_a9,participant.p22009_a10,participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 -o cohort_data.csv
 ```
