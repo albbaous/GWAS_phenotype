@@ -13,7 +13,7 @@ To get the correct data from **auth.dnanexus.com** (UK Biobank Research Analysis
   - Covariates placed in `.fam` files are Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype.
 
  - Others
-    - Algorithmically-defined dementia codes (source of dementia:`41202`, date of dementia diagnosis: `41204`) - this is just to check stats and unnecessary step. 
+    - Algorithmically-defined dementia codes (source of dementia:`41202`, date of dementia diagnosis: `41204`) - this is just to check stats and unnecessary step - this is entirely omited from final files anyway. 
 
 ```bash
 dx extract_dataset project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ302v --fields participant.eid,participant.p42019,participant.p42018,participant.p21003_i0,participant.p31,participant.p22009_a1,participant.p22009_a2,participant.p22009_a3,participant.p22009_a4,participant.p22009_a5,participant.p22009_a6,participant.p22009_a7,participant.p22009_a8,participant.p22009_a9,participant.p22009_a10,participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 -o cohort_data2.csv
@@ -41,22 +41,23 @@ record
   - i.e, `grep '100010' cohort2.csv` and check they are all the same as column names in UKB rap have metabolite name
 
 ---
->  Suggestions have been made to filter on metabolic syndrome but I will NOT do that. 
-  
-**Metabolic syndrome is defined as:**
-Metabolic syndrome is a group of conditions that increase the risk of heart disease, stroke and type 2 diabetes. These conditions include high blood pressure, high blood sugar, too much fat around the waist, and high cholesterol or triglyceride levels.
-https://www.mayoclinic.org/diseases-conditions/metabolic-syndrome/symptoms-causes/syc-20351916
+
+
 
 > ⚠️ **Note** These are some things you can do but with imputation and a diff focus this is no longer NEEDED:
 >
-> Also extract features for metabolic syndrome i.e., heart disease, stroke, diabetes and cancer - removing the unhealthy lot as theres a lot of evidence that they may skew the results i.e., https://pmc.ncbi.nlm.nih.gov/articles/PMC8504077/
+> Can extract features for metabolic syndrome i.e., heart disease, stroke, diabetes and cancer - removing the unhealthy lot as theres a lot of evidence that they may skew the results i.e., https://pmc.ncbi.nlm.nih.gov/articles/PMC8504077/
+>
+> **Metabolic syndrome is defined as:**
+Metabolic syndrome is a group of conditions that increase the risk of heart disease, stroke and type 2 diabetes. These conditions include high blood pressure, high blood sugar, too much fat around the waist, and high cholesterol or triglyceride levels.
+https://www.mayoclinic.org/diseases-conditions/metabolic-syndrome/symptoms-causes/syc-20351916
 >
 > Then clean data to remove N/A values and to remove unhealthy (so those with the above diseases)
 >
 > ❌ Do NOT remove:
-> - Missing data → instead, **impute**
-> - Unhealthy individuals → **include all**
-> - Relatives → remove **later** if needed
+> Missing data → instead, **impute**
+> Unhealthy individuals → **include all**
+> Relatives → remove **later** if needed
 ---
 ### Step 2 (on local R script) — Add weights and make score 
 For each biomarker value, the following steps are applied:
@@ -88,7 +89,7 @@ Scale to standard deviation units (mean = 0, sd = 1)
 
 **Explanation of the Parameters:**
 
-- `method`: The imputation method used (in this case, pmm stands for predictive mean matching and can alternatively use rf which is random forest).
+- `method`: The imputation method used (in this case, rf stands for random forest).
 
 - `m`: The number of imputed datasets (typically 5 or more).
 
@@ -115,7 +116,8 @@ FID	IID	Age	Sex	MetaboHealth_Score
 FID	IID	Age	Sex	PC1	PC2	PC3	PC4	PC5	PC6	PC7	PC8	PC9	PC10
 1000073	1000073	55	1	-12.5122	2.52381	-1.68065	1.15155-3.75587	-1.52478	-0.271479	-0.655341	-0.848979	0.933165
 ```
-### Step 6 (on UKB RAP) — Running GWAS on subset of data 
+
+### Step 6 (on UKB RAP) — Running GWAS on subset of data - this was done using just array data as a test
 - On UKB Rap in Jupyter notebooks, I opened up the Terminal and ran the following:
 ```
 conda install -c bioconda plink2 -y
@@ -137,40 +139,3 @@ plink2 \
 ```
 - `--thin` is to pick out 0.05% of the chrom 22 data so i am testing on only a subset
 - this produces `metabo_analysis.log` and `metabo_analysis.MetaboHealth_Score.glm.linear`
----
-
-## EXTRA - IGNORE 
-Just saving these here as it is the UKB IDs mapped to the names of variables in the Deelen paper: 
-```
-biomarkers <- tribble(
-  ~column,                    ~label,
-  "participant.eid",          "eid",
-  "participant.p21003_i0",    "Age",
-  "participant.p31",          "Sex",
-  "participant.p22009_a1",    "PC1",
-  "participant.p22009_a2",    "PC2",
-  "participant.p22009_a3",    "PC3",
-  "participant.p22009_a4",    "PC4",
-  "participant.p22009_a5",    "PC5",
-  "participant.p22009_a6",    "PC6",
-  "participant.p22009_a7",    "PC7",
-  "participant.p22009_a8",    "PC8",
-  "participant.p22009_a9",    "PC9",
-  "participant.p22009_a10",   "PC10",
-  "participant.p23470_i0",    "Glc",
-  "participant.p23471_i0",    "Lac",
-  "participant.p23463_i0",    "His",
-  "participant.p23465_i0",    "Ile",
-  "participant.p23466_i0",    "Leu",
-  "participant.p23467_i0",    "Val",
-  "participant.p23468_i0",    "Phe",
-  "participant.p23476_i0",    "AcAce",
-  "participant.p30600_i0",    "Alb",
-  "participant.p23480_i0",    "GlycA",
-  "participant.p23453_i0",    "PUFA_FA",
-  "participant.p23482_i0",    "XXL_VLDL_L",
-  "participant.p23573_i0",    "S_HDL_L",
-  "participant.p23431_i0",    "VLDL_D"
-)
-```
-I got the mappings of what they come up as in UKB from the table in `ukb_names` - which I got from a paper i cant remember the exact name of
