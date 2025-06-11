@@ -10,28 +10,14 @@ To get the correct data from **auth.dnanexus.com** (UK Biobank Research Analysis
   - Age (`21003`)
   - Sex (`31`)
   - 10 Genetic PCs (`22009_a1` to `22009_a10`)
-  - ICD-10 codes (`41202`, `41204`)
+  - Algorithmically-defined dementia codes (source of dementia:`41202`, date of dementia diagnosis: `41204`)
   - Covariates in `.fam` files are Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype.
 
-Command with ICD-10 to account for dementia:
 ```bash
-dx extract_dataset project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ302v --fields participant.eid,participant.p41202,participant.p41204,participant.p21003_i0,participant.p31,participant.p22009_a1,participant.p22009_a2,participant.p22009_a3,participant.p22009_a4,participant.p22009_a5,participant.p22009_a6,participant.p22009_a7,participant.p22009_a8,participant.p22009_a9,participant.p22009_a10,participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 -o cohort_data.csv
+dx extract_dataset project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ302v --fields participant.eid,participant.p42019,participant.p42018,participant.p21003_i0,participant.p31,participant.p22009_a1,participant.p22009_a2,participant.p22009_a3,participant.p22009_a4,participant.p22009_a5,participant.p22009_a6,participant.p22009_a7,participant.p22009_a8,participant.p22009_a9,participant.p22009_a10,participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 -o cohort_data2.csv
+
 ```
 
-Command without ICD-1O (IF YOU USE THIS CONTINUE WITH `metabohealth_withoutICD.R` instead of `metabohealth.R` - logic is all the same): 
-
-```bash
-dx extract_dataset project-Gzyb0j8JQYbBjQxYqfb4xJYX:record-GzyfX70Jfj0bvy8YfvYQ302v --fields participant.eid,participant.p41202,participant.p41204,participant.p21003_i0,participant.p31,participant.p22009_a1,participant.p22009_a2,participant.p22009_a3,participant.p22009_a4,participant.p22009_a5,participant.p22009_a6,participant.p22009_a7,participant.p22009_a8,participant.p22009_a9,participant.p22009_a10,participant.p23470_i0,participant.p23471_i0,participant.p23463_i0,participant.p23465_i0,participant.p23466_i0,participant.p23467_i0,participant.p23468_i0,participant.p23476_i0,participant.p30600_i0,participant.p23480_i0,participant.p23453_i0,participant.p23482_i0,participant.p23573_i0,participant.p23431_i0 -o cohort_data.csv
-```
-
-> ⚠️ **Note**:  
->   
-> Also retrieves ICD-10 diagnoses:
-> - `41202`: main diagnosis
-> - `41204`: secondary diagnosis  
-> This matches methods in [BMJ Mental Health 2023](https://pmc.ncbi.nlm.nih.gov/articles/instance/10577770/bin/bmjment-2023-300719supp001.pdf)
->
-> In that paper, they also included any **medications associated with dementia** to help define cases. However, I am *not* doing this, as many dementia medications are also used for **other indications** (e.g., antipsychotics or stimulants like **modafinil**), which may **skew results**.  
 
 ### dx Command Explanation
 
@@ -51,21 +37,9 @@ record
 
 > ⚠️ **Note**: You can check values by mirroring/building the same cohort on UKB RAP, selecting a participant and seeing if the values are the same.
   - i.e, `grep '100010' cohort2.csv` and check they are all the same as column names in UKB rap have metabolite name
+
 ---
-
-### Step 2 (just notes)— Exclude Dementia Diagnoses and pick filters
-
-We exclude individuals with these ICD-10 codes (described in `icd10_meaning`) related to dementia:
-
-```
-A810, F00, F000, F001, F002, F009, F01, F010, F011, F012, F013, F018, F019,
-F02, F020, F021, F022, F023, F024, F028, F03, F051, F106, G30, G300, G301,
-G308, G309, G310, G311, G318, I673
-```
-
-Focus is only on **hospital-diagnosed cases**, not medications.
-
-- Suggestions have been made to filter on metabolic syndrome.
+>  Suggestions have been made to filter on metabolic syndrome but I will NOT do that. 
   
 **Metabolic syndrome is defined as:**
 Metabolic syndrome is a group of conditions that increase the risk of heart disease, stroke and type 2 diabetes. These conditions include high blood pressure, high blood sugar, too much fat around the waist, and high cholesterol or triglyceride levels.
@@ -82,7 +56,7 @@ https://www.mayoclinic.org/diseases-conditions/metabolic-syndrome/symptoms-cause
 > - Unhealthy individuals → **include all**
 > - Relatives → remove **later** if needed
 ---
-### Step 3 (on local R script) — Add weights and make score 
+### Step 2 (on local R script) — Add weights and make score 
 For each biomarker value, the following steps are applied:
 
 ---
@@ -171,8 +145,6 @@ biomarkers <- tribble(
   "participant.eid",          "eid",
   "participant.p21003_i0",    "Age",
   "participant.p31",          "Sex",
-  "participant.p41202",       "ICD10_Main",
-  "participant.p41204",       "ICD10_Secondary",
   "participant.p22009_a1",    "PC1",
   "participant.p22009_a2",    "PC2",
   "participant.p22009_a3",    "PC3",
