@@ -41,24 +41,6 @@ record
   - i.e, `grep '100010' cohort2.csv` and check they are all the same as column names in UKB rap have metabolite name
 
 ---
-
-
-
-> ⚠️ **Note** These are some things you can do but with imputation and a diff focus this is no longer NEEDED:
->
-> Can extract features for metabolic syndrome i.e., heart disease, stroke, diabetes and cancer - removing the unhealthy lot as theres a lot of evidence that they may skew the results i.e., https://pmc.ncbi.nlm.nih.gov/articles/PMC8504077/
->
-> **Metabolic syndrome is defined as:**
-Metabolic syndrome is a group of conditions that increase the risk of heart disease, stroke and type 2 diabetes. These conditions include high blood pressure, high blood sugar, too much fat around the waist, and high cholesterol or triglyceride levels.
-https://www.mayoclinic.org/diseases-conditions/metabolic-syndrome/symptoms-causes/syc-20351916
->
-> Then clean data to remove N/A values and to remove unhealthy (so those with the above diseases)
->
-> ❌ Do NOT remove:
-> Missing data → instead, **impute**
-> Unhealthy individuals → **include all**
-> Relatives → remove **later** if needed
----
 ### Step 2 (on local R script) — Add weights and make score 
 For each biomarker value, the following steps are applied:
 
