@@ -41,7 +41,7 @@ record
   - i.e, `grep '100010' cohort2.csv` and check they are all the same as column names in UKB rap have metabolite name
 
 ---
-### Step 2 (on local R script `metabohealth.R`) — Add weights and make score 
+## Step 2 (on local R script `metabohealth.R`) — Add weights and make score 
 For each biomarker value, the following steps are applied:
 
 #### 1. Handle Zero Values
@@ -57,7 +57,7 @@ Scale to standard deviation units (mean = 0, sd = 1)
 #### 4.Add weights from Deelen et al., paper to get score
 
 ---
-### Step 3 (on local R script)— Imputation using Age, and Sex as predictors 
+## Step 3 (on local R script)— Imputation using Age, and Sex as predictors 
 - Followed this lovely tutorial: https://libguides.princeton.edu/R-Missingdata
 - This is all in 'metabohealth.R'
 
@@ -68,7 +68,7 @@ Scale to standard deviation units (mean = 0, sd = 1)
 - `m`: The number of imputed datasets (typically 5 or more).
 
 ---
-### Step 4 (on local R script)— GWAS format 
+## Step 4 (on local R script)— GWAS format 
 - The `.fam` file in UKB has the following columns which correspond to Family ID (FIID), Individual ID (IID),  paternal ID, maternal ID and phenotype. 
 
 ```
@@ -91,7 +91,7 @@ FID	IID	Age	Sex	PC1	PC2	PC3	PC4	PC5	PC6	PC7	PC8	PC9	PC10
 1000073	1000073	55	1	-12.5122	2.52381	-1.68065	1.15155-3.75587	-1.52478	-0.271479	-0.655341	-0.848979	0.933165
 ```
 ---
-### 🗑️ Step 5 (on UKB RAP) — Running GWAS on subset of data - this was done using just array data as a test
+## 🗑️ Step 5 (on UKB RAP) — Running GWAS on subset of data - this was done using just array data as a test
 - On UKB Rap in Jupyter notebooks, I opened up the Terminal and ran the following:
 ```
 conda install -c bioconda plink2 -y
