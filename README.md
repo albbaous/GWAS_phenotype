@@ -1,6 +1,7 @@
 # GWAS Phenotype 
 A simple pipeline for extracting my phenotype — all the way through to running my GWAS. This is MetaboHealth as defined in Deelen et al., 2019
 
+---
 ## Step 1 — Extracting Metabolites for Phenotype
 To get the correct data from **auth.dnanexus.com** (UK Biobank Research Analysis Platform), you need to use the `dx extract_dataset` command. 
 
@@ -43,7 +44,6 @@ record
 ### Step 2 (on local R script `metabohealth.R`) — Add weights and make score 
 For each biomarker value, the following steps are applied:
 
----
 #### 1. Handle Zero Values
 
 If the raw observed value is 0, add 1 to make it compatible with log-transformation
@@ -56,7 +56,6 @@ Scale to standard deviation units (mean = 0, sd = 1)
 
 #### 4.Add weights from Deelen et al., paper to get score
 
-  
 ---
 ### Step 3 (on local R script)— Imputation using Age, and Sex as predictors 
 - Followed this lovely tutorial: https://libguides.princeton.edu/R-Missingdata
@@ -91,8 +90,8 @@ FID	IID	Age	Sex	MetaboHealth_Score
 FID	IID	Age	Sex	PC1	PC2	PC3	PC4	PC5	PC6	PC7	PC8	PC9	PC10
 1000073	1000073	55	1	-12.5122	2.52381	-1.68065	1.15155-3.75587	-1.52478	-0.271479	-0.655341	-0.848979	0.933165
 ```
-
-### Step 5 (on UKB RAP) — Running GWAS on subset of data - this was done using just array data as a test
+---
+### 🗑️ Step 5 (on UKB RAP) — Running GWAS on subset of data - this was done using just array data as a test
 - On UKB Rap in Jupyter notebooks, I opened up the Terminal and ran the following:
 ```
 conda install -c bioconda plink2 -y
