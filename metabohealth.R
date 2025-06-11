@@ -11,7 +11,10 @@ library(tidyr)
 setwd('/Users/user')
 
 # Read in metabolite data which also includes sex, age, bmi 
-df <- read_csv("cohort_data.csv")
+df <- read_csv("cohort_data2.csv")
+
+# Convert to date properly (only if it's numeric!)
+df$`participant.p42018` <- as.Date(df$`participant.p42018`, origin = "1970-01-01")
 
 # Define biomarkers and weights from Deelen et al., 2019
 biomarkers <- tribble(
@@ -19,8 +22,8 @@ biomarkers <- tribble(
   "participant.eid",          "eid",
   "participant.p21003_i0",    "Age",
   "participant.p31",          "Sex",
-  "participant.p41202",       "ICD10_Main",
-  "participant.p41204",       "ICD10_Secondary",
+  "participant.p42018",       "Date of dementia diagnosis",
+  "participant.p42019",       "Source of all cause dementia",
   "participant.p22009_a1",    "PC1",
   "participant.p22009_a2",    "PC2",
   "participant.p22009_a3",    "PC3",
@@ -39,7 +42,7 @@ biomarkers <- tribble(
   "participant.p23467_i0",    "Val",
   "participant.p23468_i0",    "Phe",
   "participant.p23476_i0",    "AcAce",
-  "participant.p30600_i0",    "Alb",
+  "participant.p23479_i0",    "Alb",
   "participant.p23480_i0",    "GlycA",
   "participant.p23453_i0",    "PUFA_FA",
   "participant.p23482_i0",    "XXL_VLDL_L",
@@ -47,11 +50,17 @@ biomarkers <- tribble(
   "participant.p23431_i0",    "VLDL_D"
 )
 
-# Rename the columns based on the biomarkers table
 df <- df %>%
   rename_with(~ biomarkers$label[match(.x, biomarkers$column)], .cols = everything())
 
-# Remove rows that have NA values in the 10 PC columns (PC1 to PC10)
+# -------------------------------
+# Initial sample size
+# -------------------------------
+cat("Number of individuals before all filtering:", nrow(df), "\n")
+
+# -------------------------------
+# Filter: remove rows with NA in any of the 10 PC columns
+# -------------------------------
 df <- df %>%
   filter(
     !is.na(PC1) & !is.na(PC2) & !is.na(PC3) & !is.na(PC4) & 
@@ -59,56 +68,27 @@ df <- df %>%
       !is.na(PC9) & !is.na(PC10)
   )
 
-# ICD10 codes to exclude
-exclude_icd10 <- c(
-  "A810", "F00", "F000", "F001", "F002", "F009", "F01", "F010", "F011", "F012",
-  "F013", "F018", "F019", "F02", "F020", "F021", "F022", "F023", "F024", "F028",
-  "F03", "F051", "F106", "G30", "G300", "G301", "G308", "G309", "G310",
-  "G311", "G318", "I673"
-)
-
-# Helper function to check if any exclusion code is present
-contains_excluded_code <- function(icd_string) {
-  if (is.na(icd_string)) return(FALSE)
-  codes <- tryCatch(fromJSON(icd_string), error = function(e) return(character(0)))
-  any(codes %in% exclude_icd10)
-}
-
-# Count before filtering
-n_before_icd_filter <- nrow(df)
-
-# Apply the filter for ICD-10 exclusions
-df <- df %>%
-  filter(
-    !mapply(contains_excluded_code, ICD10_Main) &
-      !mapply(contains_excluded_code, ICD10_Secondary)
-  )
-
-# Count after filtering
-n_after_icd_filter <- nrow(df)
-
-# Print results
-cat("Number of rows before ICD-10 filtering:", n_before_icd_filter, "\n")
-cat("Number of rows after ICD-10 filtering:", n_after_icd_filter, "\n")
-cat("Number of rows removed due to ICD-10 exclusion:", 
-    n_before_icd_filter - n_after_icd_filter, "\n")
-
-# Define the metabolite columns (from the biomarkers table)
+# -------------------------------
+# Define metabolite columns and filter for missingness
+# -------------------------------
 metabolites <- c("Glc", "Lac", "His", "Ile", "Leu", "Val", "Phe", "AcAce", "Alb", 
                  "GlycA", "PUFA_FA", "XXL_VLDL_L", "S_HDL_L", "VLDL_D")
 
-# Remove rows where all 14 metabolites are missing or 13 metabolites excluding Alb
 df <- df %>%
   filter(
     rowSums(is.na(df[metabolites])) < length(metabolites) & 
       rowSums(is.na(df[setdiff(metabolites, "Alb")])) < (length(metabolites) - 1)
   )
 
-# Count after removal
-n_after <- nrow(df)
-cat("Number of individuals after filtering:", n_after, "\n")
 
-# Recalculate the percentage of missing values and number of missing individuals for each metabolite
+# -------------------------------
+# Final sample size
+# -------------------------------
+cat("Number of individuals after all filtering:", nrow(df), "\n")
+
+# -------------------------------
+# Missing summary for metabolites
+# -------------------------------
 missing_summary_post_filter <- df %>%
   summarise(across(
     all_of(metabolites),
@@ -126,9 +106,12 @@ missing_summary_post_filter <- df %>%
   pivot_wider(names_from = Metric, values_from = value) %>%
   arrange(desc(missing_pct))
 
-# Print the updated missing summary
+# Print updated missing summary
 print(missing_summary_post_filter)
 
+# -------------------------------
+# Imputation
+# -------------------------------
 # Prepare the data for imputation (Age, Sex, and metabolites)
 df_imputation <- df %>%
   select(c("Age", "Sex", all_of(metabolites)))
@@ -234,7 +217,7 @@ df_extended <- df_extended %>%
 
 # Clean up column names in df_extended
 df_extended2 <- df_extended %>%
-  # Rename columns Age...2, Sex...3, and BMI...4 to Age, Sex, and BMI
+  # Rename columns Age...4, Sex...5, to Age, Sex, and BMI
   rename(
     Age = `Age...4`,
     Sex = `Sex...5`
@@ -266,6 +249,7 @@ head(df_phen)
 # Save the result to a file (e.g., tab-delimited .pheno)
 write.table(df_phen, "ukb_phenotype_data.pheno", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
+
 # Create COVARIATE file '.cov'
 df_cov <- df_final %>%
   select(eid, Age, Sex, starts_with("PC")) %>%
@@ -281,3 +265,4 @@ head(df_cov)
 
 # Save the result to a file (e.g., tab-delimited .cov)
 write.table(df_cov, "ukb_covariates.cov", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
+
