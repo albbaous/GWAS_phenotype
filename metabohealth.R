@@ -241,7 +241,7 @@ df_phen <- df_final %>%
   # Add 'FID' column with values same as 'IID' (i.e., both FID and IID will be the same)
   mutate(FID = IID) %>%
   # Select the desired columns in the specified order
-  select(FID, IID, Age, Sex, MetaboHealth_Score)
+  select(FID, IID, MetaboHealth_Score)
 
 # View the final phenotype dataframe
 head(df_phen)
